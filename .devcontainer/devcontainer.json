@@ -1,0 +1,14 @@
+{
+	"name": "C++",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+
+    "customizations" : {
+      "jetbrains" : {
+        "backend" : "CLion"
+      }
+    },
+
+    "postCreateCommand": "apt-get update && apt-get install -y cmake && git config --global --add safe.directory '*'"
+}
