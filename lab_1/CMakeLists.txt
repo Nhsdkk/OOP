@@ -1,17 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
-project(lab_1)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(SubProjectName "lab_1")
 
-add_library(${CMAKE_PROJECT_NAME}_lib src/gcd.cpp)
-add_executable(${CMAKE_PROJECT_NAME}_exe main.cpp)
+add_library(${SubProjectName}_lib src/gcd.cpp)
+add_executable(${SubProjectName}_exe main.cpp)
 
-target_link_libraries(${CMAKE_PROJECT_NAME}_exe PRIVATE ${CMAKE_PROJECT_NAME}_lib)
-
-enable_testing()
+target_link_libraries(${SubProjectName}_exe PRIVATE ${SubProjectName}_lib)
 
 add_executable(tests tests/test.cpp)
-target_link_libraries(tests ${CMAKE_PROJECT_NAME}_lib gtest_main)
+target_link_libraries(tests ${SubProjectName}_lib gtest_main)
 
-add_test(NAME Tests COMMAND tests)
+add_test(NAME {SubProjectName}_Tests COMMAND tests)

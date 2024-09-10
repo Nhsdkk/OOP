@@ -22,31 +22,31 @@ TEST(test_03, test_set)
 
 TEST(test_04, test_set)
 {
-    auto lval = 28, rval = -362;
+    auto lval (28), rval (-362);
     ASSERT_EQ(gcd(lval,rval), std::gcd(lval,rval));
 }
 
 TEST(test_05, test_set)
 {
-    auto lval = -5, rval = 25;
+    auto lval (-5), rval (25);
     ASSERT_EQ(gcd(lval,rval), std::gcd(lval,rval));
 }
 
 TEST(test_06, test_set)
 {
-    auto lval = -5, rval = -25;
+    auto lval (-5), rval (-25);
     ASSERT_EQ(gcd(lval,rval), std::gcd(lval,rval));
 }
 
 TEST(test_07, test_set)
 {
-    auto lval = 0, rval = -25;
+    auto lval (0), rval (-25);
     ASSERT_EQ(gcd(lval,rval), std::gcd(lval,rval));
 }
 
 TEST(test_08, test_set)
 {
-    auto lval = 0, rval = 0;
+    auto lval (0), rval (0);
     ASSERT_EQ(gcd(lval,rval), std::gcd(lval,rval));
 }
 
