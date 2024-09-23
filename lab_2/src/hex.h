@@ -32,7 +32,7 @@ namespace hex {
         bool operator==(const Hex& other) const;
         Hex operator+=(const Hex& other);
         Hex operator-=(const Hex& other);
-        Hex& operator=(Hex&& other) noexcept ;
+        Hex& operator=(const Hex& other) ;
 
         virtual ~Hex() noexcept;
 
@@ -42,6 +42,7 @@ namespace hex {
 
         explicit Hex(size_t size);
 
+        static void swap(Hex& h1, Hex& h2) ;
         void set_char(unsigned char ch, size_t idx) const;
         static std::string lpad(const unsigned char * const val, size_t size, size_t preferredSize);
         static std::string trim(std::string val);

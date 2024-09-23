@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <format>
 #include <cmath>
+#include <iostream>
 
 namespace hex {
     const unsigned short base = 16;
@@ -46,10 +47,7 @@ namespace hex {
     }
 
     Hex::Hex(Hex &&hex) noexcept {
-        value = hex.value;
-        size = hex.size;
-
-        hex.~Hex();
+        swap(*this, hex);
     }
 
     unsigned char * Hex::get_value() const {
@@ -198,18 +196,20 @@ namespace hex {
         return *this;
     }
 
-    Hex &Hex::operator=(Hex &&other) noexcept {
-        if (this == &other) return *this;
-
-        this->size = other.size;
-        this->value = other.value;
-
-        delete &other;
-
+    Hex &Hex::operator=(const Hex &other) {
+        auto otherCopy = Hex(other);
+        swap(*this, otherCopy);
         return *this;
     }
 
-    BinaryException::BinaryException(const unsigned char ch) : message(std::format("received non binary value {}", ch)) {}
+    void Hex::swap(Hex &h1, Hex &h2) {
+        h1.value = h2.value;
+        h1.size = h2.size;
+
+        h2.~Hex();
+    }
+
+BinaryException::BinaryException(const unsigned char ch) : message(std::format("received non binary value {}", ch)) {}
 
     const char *BinaryException::what() const noexcept {
         return message.data();
