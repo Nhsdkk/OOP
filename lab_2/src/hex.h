@@ -18,12 +18,12 @@ namespace hex {
     public:
         Hex();
         explicit Hex(const std::string& string);
-        Hex(size_t size, unsigned char ch);
+//        Hex(size_t size, unsigned char ch);
         Hex(const std::initializer_list<unsigned char> &t);
         Hex(const Hex& hex);
         Hex(Hex&& hex) noexcept ;
 
-        unsigned char * get_value() const;
+        [[nodiscard]] unsigned char * get_value() const;
 
         Hex operator+(const Hex& other) const;
         Hex operator-(const Hex& other) const;
@@ -32,6 +32,7 @@ namespace hex {
         bool operator==(const Hex& other) const;
         Hex operator+=(const Hex& other);
         Hex operator-=(const Hex& other);
+        Hex& operator=(Hex&& other) noexcept ;
 
         virtual ~Hex() noexcept;
 
@@ -44,7 +45,7 @@ namespace hex {
         void set_char(unsigned char ch, size_t idx) const;
         static std::string lpad(const unsigned char * const val, size_t size, size_t preferredSize);
         static std::string trim(std::string val);
-        static short get_int(const unsigned char ch);
+        static short get_int(unsigned char ch);
     };
 
 }

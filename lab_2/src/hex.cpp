@@ -25,11 +25,11 @@ namespace hex {
         }
     }
 
-    Hex::Hex(const size_t size, const unsigned char ch) : Hex(size) {
-      for (size_t i = 0; i < this->size; ++i) {
-          this->set_char(ch, i);
-      }
-    }
+//    Hex::Hex(const size_t size, const unsigned char ch) : Hex(size) {
+//      for (size_t i = 0; i < this->size; ++i) {
+//          this->set_char(ch, i);
+//      }
+//    }
 
     Hex::Hex(const std::initializer_list<unsigned char> &t) : Hex(t.size()) {
         size_t i {0};
@@ -198,7 +198,18 @@ namespace hex {
         return *this;
     }
 
-BinaryException::BinaryException(const unsigned char ch) : message(std::format("received non binary value {}", ch)) {}
+    Hex &Hex::operator=(Hex &&other) noexcept {
+        if (this == &other) return *this;
+
+        this->size = other.size;
+        this->value = other.value;
+
+        delete &other;
+
+        return *this;
+    }
+
+    BinaryException::BinaryException(const unsigned char ch) : message(std::format("received non binary value {}", ch)) {}
 
     const char *BinaryException::what() const noexcept {
         return message.data();
