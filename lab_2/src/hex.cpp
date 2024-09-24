@@ -202,6 +202,11 @@ namespace hex {
         return *this;
     }
 
+    Hex &Hex::operator=(Hex &&other) noexcept {
+        swap(*this, other);
+        return *this;
+    }
+
     void Hex::swap(Hex &h1, Hex &h2) {
         h1.value = h2.value;
         h1.size = h2.size;
