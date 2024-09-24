@@ -214,7 +214,11 @@ namespace hex {
         h2.~Hex();
     }
 
-BinaryException::BinaryException(const unsigned char ch) : message(std::format("received non binary value {}", ch)) {}
+    bool Hex::operator!=(const Hex &other) const {
+        return !(*this == other);
+    }
+
+    BinaryException::BinaryException(const unsigned char ch) : message(std::format("received non binary value {}", ch)) {}
 
     const char *BinaryException::what() const noexcept {
         return message.data();

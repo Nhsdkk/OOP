@@ -30,10 +30,12 @@ namespace hex {
         bool operator<(const Hex& other) const;
         bool operator>(const Hex& other) const;
         bool operator==(const Hex& other) const;
+        bool operator!=(const Hex& other) const;
         Hex operator+=(const Hex& other);
         Hex operator-=(const Hex& other);
         Hex& operator=(const Hex& other);
         Hex& operator=(Hex&& other)  noexcept ;
+
 
         virtual ~Hex() noexcept;
 
