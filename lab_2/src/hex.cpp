@@ -6,23 +6,73 @@
 #include <cmath>
 #include <iostream>
 
-namespace hex {
+namespace  {
     const unsigned short base = 16;
     const unsigned char chars[] = {
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
 
+    void set_char(unsigned char * str, const unsigned char ch, const size_t idx, const size_t str_size) {
+        if (std::find(std::begin(chars), std::end(chars), ch) == std::end(chars)) throw exception::BinaryException(ch);
+        if (idx >= str_size) throw std::out_of_range(std::format("received value outside of number bounds {}" ,idx));
+        str[idx] = ch;
+    }
+
+    std::string lpad(const unsigned char *const val, size_t valSize, size_t preferredSize) {
+        auto diff = preferredSize - valSize;
+        std::string result(preferredSize, ' ');
+
+        for (size_t i = 0; i < preferredSize; ++i){
+            if (i < diff){
+                result[i] = '0';
+                continue;
+            }
+
+            result[i] = val[i - diff];
+        }
+
+        return result;
+    }
+
+    std::string trim(std::string val) {
+        auto i{0};
+        while (val[i] == '0') { ++i; }
+
+        std::string result(val.length() - i, ' ');
+
+        for (auto k = 0; k < val.length(); ++k){
+            result[k] = val[k + i];
+        }
+
+        return result;
+    }
+
+    short get_int(const unsigned char ch) {
+        short number = ch - '0';
+        short al = ch - 'A';
+        if (al >= 0) return al + 10;
+        else return number;
+    }
+}
+
+namespace exception {
+    BinaryException::BinaryException(const unsigned char ch) : message(std::format("received non binary value {}", ch)) {}
+
+    const char *BinaryException::what() const noexcept {
+        return message.data();
+    }
+}
+
+namespace hex {
     Hex::Hex(): value(nullptr), size(0) {}
 
-    Hex::Hex(const size_t size) {
-        this->size = size;
-        this->value = new unsigned char[size + 1];
+    Hex::Hex(const size_t size) : size(size), value(new unsigned char[size + 1]) {
         this->value[this->size] = '\0';
     }
 
     Hex::Hex(const std::string& string) : Hex(string.length()) {
         for (size_t i = 0; i < this->size; ++i) {
-            this->set_char(string[i], i);
+            set_char(this->value, string[i], i, this->size);
         }
     }
 
@@ -36,13 +86,13 @@ namespace hex {
         size_t i {0};
 
         for (const auto& c : t) {
-            this->set_char(c, i++);
+            set_char(this->value, c, i++, this->size);
         }
     }
 
     Hex::Hex(const Hex &hex) : Hex(hex.size) {
         for (size_t i = 0; i < hex.size; ++i) {
-            this->set_char(hex.value[i], i);
+            set_char(this->value, hex.value[i], i, this->size);
         }
     }
 
@@ -51,7 +101,7 @@ namespace hex {
     }
 
     unsigned char * Hex::get_value() const {
-        if (this->size == 0) return reinterpret_cast<unsigned char *>('0');
+        if (this->size == 0) return nullptr;
         return this->value;
     }
 
@@ -127,7 +177,6 @@ namespace hex {
 
     bool Hex::operator==(const Hex &other) const {
         if (this->size != other.size) return false;
-        if (this->size == 0) return true;
         for (size_t i = 0; i < this->size; ++i) {
             if (this->value[i] != other.value[i]) return false;
         }
@@ -135,51 +184,8 @@ namespace hex {
     }
 
     Hex::~Hex() noexcept {
-        if (this->size == 0) return;
         this->size = 0;
-        this->value = nullptr;
-    }
-
-    void Hex::set_char(const unsigned char ch, const size_t idx) const {
-        if (std::find(std::begin(chars), std::end(chars), ch) == std::end(chars)) throw BinaryException(ch);
-        if (idx >= this->size) throw std::out_of_range(std::format("received value outside of number bounds {}" ,idx));
-        this->value[idx] = ch;
-    }
-
-    std::string Hex::lpad(const unsigned char *const val, size_t valSize, size_t preferredSize) {
-        auto diff = preferredSize - valSize;
-        std::string result(preferredSize, ' ');
-
-        for (size_t i = 0; i < preferredSize; ++i){
-            if (i < diff){
-                result[i] = '0';
-                continue;
-            }
-
-            result[i] = val[i - diff];
-        }
-
-        return result;
-    }
-
-    std::string Hex::trim(std::string val) {
-        auto i{0};
-        while (val[i] == '0') { ++i; }
-
-        std::string result(val.length() - i, ' ');
-
-        for (auto k = 0; k < val.length(); ++k){
-            result[k] = val[k + i];
-        }
-
-        return result;
-    }
-
-    short Hex::get_int(const unsigned char ch) {
-        short number = ch - '0';
-        short al = ch - 'A';
-        if (al >= 0) return al + 10;
-        else return number;
+        delete[] this->value;
     }
 
     Hex Hex::operator+=(const Hex &other) {
@@ -210,18 +216,10 @@ namespace hex {
     void Hex::swap(Hex &h1, Hex &h2) {
         h1.value = h2.value;
         h1.size = h2.size;
-
-        h2.~Hex();
     }
 
     bool Hex::operator!=(const Hex &other) const {
         return !(*this == other);
-    }
-
-    BinaryException::BinaryException(const unsigned char ch) : message(std::format("received non binary value {}", ch)) {}
-
-    const char *BinaryException::what() const noexcept {
-        return message.data();
     }
 
 }

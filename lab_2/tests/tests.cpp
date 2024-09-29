@@ -34,7 +34,7 @@ TEST(should_throw_exception_when_number_is_not_valid_hex_value, string_tests) {
     EXPECT_THROW([]{
         auto hex = new ::hex::Hex{"1010103g"};
         std::cout << hex->get_value();
-    }(), ::hex::BinaryException);
+    }(), exception::BinaryException);
 }
 
 //TEST(should_create_instance_when_char_is_valid_hex_value, fill_tests) {
@@ -63,7 +63,7 @@ TEST(should_create_instance_when_number_is_valid_hex_value, list_tests) {
 TEST(should_throw_exception_when_number_is_not_valid_hex_value, list_tests) {
     EXPECT_THROW(([]{
      auto hex = new ::hex::Hex{'1', '0', '3', 't', '3', '2'};
-    }()), ::hex::BinaryException);
+    }()), exception::BinaryException);
 }
 
 TEST(should_sum_two_numbers_correctly_1, sum_tests){
@@ -170,7 +170,8 @@ TEST(should_subtract_two_numbers_correctly_1, subtraction_tests){
 TEST(should_subtract_two_numbers_correctly_2, subtraction_tests){
     const auto h1 = ::hex::Hex("CD");
     const auto h2 = ::hex::Hex("AB");
-    ASSERT_TRUE(validate_value("22", (h1 - h2).get_value()));
+    const auto result = h1 - h2;
+    ASSERT_TRUE(validate_value("22", result.get_value()));
 }
 
 TEST(should_substract_two_numbers_correctly_3, subtraction_tests){
