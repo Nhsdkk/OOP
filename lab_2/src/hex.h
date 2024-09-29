@@ -28,7 +28,7 @@ namespace hex {
         Hex(Hex&& hex) noexcept ;
         Hex& operator=(Hex&& other)  noexcept ;
 
-        [[nodiscard]] unsigned char * get_value() const;
+        unsigned char * get_value() const;
 
         Hex operator+(const Hex& other) const;
         Hex operator-(const Hex& other) const;
@@ -36,8 +36,8 @@ namespace hex {
         bool operator>(const Hex& other) const;
         bool operator==(const Hex& other) const;
         bool operator!=(const Hex& other) const;
-        Hex operator+=(const Hex& other);
-        Hex operator-=(const Hex& other);
+        Hex& operator+=(const Hex& other);
+        Hex& operator-=(const Hex& other);
 
 
         virtual ~Hex() noexcept;

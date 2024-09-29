@@ -184,21 +184,18 @@ namespace hex {
     }
 
     Hex::~Hex() noexcept {
-        this->size = 0;
         delete[] this->value;
     }
 
-    Hex Hex::operator+=(const Hex &other) {
+    Hex& Hex::operator+=(const Hex &other) {
         auto result = *this + other;
-        this->size = result.size;
-        this->value = result.value;
+        Hex::swap(*this, result);
         return *this;
     }
 
-    Hex Hex::operator-=(const Hex &other) {
+    Hex& Hex::operator-=(const Hex &other) {
         auto result = *this - other;
-        this->size = result.size;
-        this->value = result.value;
+        Hex::swap(*this, result);
         return *this;
     }
 
@@ -216,6 +213,8 @@ namespace hex {
     void Hex::swap(Hex &h1, Hex &h2) {
         h1.value = h2.value;
         h1.size = h2.size;
+
+        h2.value = nullptr;
     }
 
     bool Hex::operator!=(const Hex &other) const {
