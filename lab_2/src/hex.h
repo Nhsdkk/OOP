@@ -39,8 +39,7 @@ namespace hex {
         Hex& operator+=(const Hex& other);
         Hex& operator-=(const Hex& other);
 
-
-        virtual ~Hex() noexcept;
+        ~Hex() noexcept;
 
     private:
         unsigned char* value;
