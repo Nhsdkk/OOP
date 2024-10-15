@@ -53,4 +53,43 @@ namespace Shape {
         capacity = calculate_capacity(size);
         figures = static_cast<Figure **>(std::malloc(sizeof(Figure *) * capacity));
     }
+
+    FigureArray::FigureArray(FigureArray &&array) noexcept : totalArea(array.totalArea), size(array.size), capacity(array.capacity) {
+        figures = array.figures;
+
+        array.figures = nullptr;
+        array.size = 0;
+        array.capacity = 0;
+        array.totalArea = 0;
+    }
+
+    FigureArray::FigureArray(const FigureArray &array) : totalArea(array.totalArea), size(array.size), capacity(array.capacity) {
+        figures = static_cast<Figure**>(std::malloc(sizeof(Figure*) * array.size));
+        for (auto i = 0; i < array.size; ++i){
+            figures[i] = array[i];
+        }
+    }
+
+    FigureArray &FigureArray::operator=(FigureArray &&array) noexcept {
+        figures = array.figures;
+
+        array.figures = nullptr;
+        array.size = 0;
+        array.capacity = 0;
+        array.totalArea = 0;
+
+        return *this;
+    }
+
+    FigureArray &FigureArray::operator=(const FigureArray &array) {
+        auto copy = FigureArray(array);
+
+        figures = copy.figures;
+        size = copy.size;
+        capacity = copy.capacity;
+        totalArea = copy.totalArea;
+
+        copy.figures = nullptr;
+        return *this;
+    }
 }
