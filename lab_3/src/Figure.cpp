@@ -77,6 +77,11 @@ namespace Shape {
     }
 
     Figure::operator double() const {
-        return 0;
+        double area = 0;
+        for (int i = 0; i < points.size() - 1; ++i) {
+            Point p1 {points[i]}, p2 {points[i + 1]};
+            area += p1.x * p2.y - p2.x * p1.y;
+        }
+        return 0.5 * std::abs(area);
     }
 }

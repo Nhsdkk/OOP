@@ -23,7 +23,7 @@ namespace Shape {
         protected:
             std::vector<Point> points;
         public:
-            Figure() = default;
+            Figure() : points({}){}
             Figure(std::initializer_list<Point> points);
 
             Figure(const Figure& figure);
