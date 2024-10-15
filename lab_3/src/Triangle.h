@@ -21,7 +21,6 @@ namespace Shape {
             friend std::istream& operator>> (std::istream& is, Triangle& triangle);
 
             explicit operator double()const override;
-            ~Triangle() override = default;
     };
 
 }

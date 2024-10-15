@@ -24,8 +24,6 @@ class Square : public Figure {
         bool operator==(const Square& square) const;
 
         explicit operator double()const override;
-
-        ~Square() override = default;
     };
 
 }

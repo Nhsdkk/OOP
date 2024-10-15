@@ -30,7 +30,6 @@ namespace Shape {
         friend std::istream& operator>> (std::istream& is, Octagon& octagon);
 
         explicit operator double()const override;
-        ~Octagon() override = default;
     };  
 
 }
