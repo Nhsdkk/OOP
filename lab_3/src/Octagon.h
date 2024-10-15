@@ -22,10 +22,10 @@ namespace Shape {
         Octagon(std::initializer_list<Point> points);
         Octagon(double l, const Point& center);
 
-        Octagon(const Octagon& octagon) = default;
-        Octagon(Octagon&& octagon) noexcept = default;
-        Octagon& operator=(const Octagon& other) = default;
-        Octagon& operator=(Octagon&& other)  noexcept = default;
+        Octagon(const Octagon& octagon);
+        Octagon(Octagon&& octagon) noexcept;
+        Octagon& operator=(const Octagon& other);
+        Octagon& operator=(Octagon&& other)  noexcept;
 
         friend std::istream& operator>> (std::istream& is, Octagon& octagon);
 

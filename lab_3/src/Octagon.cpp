@@ -47,4 +47,26 @@ namespace Shape {
             Shape::Point{startP.x + delta, startP.y + delta}
         };
     }
+
+    Octagon::Octagon(const Octagon &octagon) : Figure(octagon) {
+        l = octagon.l;
+    }
+
+    Octagon::Octagon(Octagon &&octagon) noexcept {
+        l = octagon.l;
+        points = std::move(octagon.points);
+    }
+
+    Octagon &Octagon::operator=(const Octagon &other) {
+        auto copy = Octagon(other);
+        l = copy.l;
+        points = std::move(copy.points);
+        return *this;
+    }
+    Octagon &Octagon::operator=(Octagon &&other) noexcept {
+        l = other.l;
+        points = std::move(other.points);
+        return *this;
+    }
+
 }
