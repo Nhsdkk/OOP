@@ -20,6 +20,11 @@ namespace Shape {
             FigureArray() : figures(nullptr), size(0), capacity(0), totalArea(0) {};
             FigureArray(std::initializer_list<Figure*> list);
 
+            FigureArray(const FigureArray& array);
+            FigureArray(FigureArray&& array) noexcept;
+            FigureArray& operator=(const FigureArray& array);
+            FigureArray& operator=(FigureArray&& array) noexcept;
+
             void push_back(Figure* figure);
             void remove_at(size_t idx);
 

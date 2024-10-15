@@ -34,7 +34,7 @@ namespace Shape {
 
     Octagon::Octagon(double l, const Point &center) : l(l) {
         auto delta = l / std::sqrt(2);
-        auto startP = Point{center.x - l / 2, center.y - l/2 - delta};
+        auto startP = Point{center.x + l / 2, center.y - l/2 - delta};
 
         points = {
             startP,
