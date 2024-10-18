@@ -1,13 +1,15 @@
 #include "Octagon.h"
 
 namespace Shape {
-    Octagon::Octagon(std::initializer_list<Point> p) : Figure(p) {
-        l = std::sqrt(std::pow(points[0].x - points[1].x, 2) + std::pow(points[0].y - points[1].y, 2));
+    Octagon::Octagon(const std::initializer_list<Point> p) : Figure(p) {
+        double dx {points[0].x - points[1].x}, dy {points[0].y - points[1].y};
+        l = dx * dx + dy * dy;
     }
 
     Octagon::operator double() const {
-        return 2 * pow(l, 2) * (std::sqrt(2) + 1);
+        return 2 * l * l * (std::numbers::sqrt2 + 1);
     }
+
     std::istream &operator>>(std::istream &is, Octagon &octagon) {
         std::cout << "Enter l: ";
         is >> octagon.l;
@@ -15,7 +17,7 @@ namespace Shape {
         auto center = Point{};
         is >> center;
 
-        auto delta = octagon.l / std::sqrt(2);
+        auto delta = octagon.l / std::numbers::sqrt2;
         auto startP = Point{center.x - octagon.l / 2, center.y - octagon.l/2 - delta};
 
         octagon.points = {
@@ -33,7 +35,7 @@ namespace Shape {
     }
 
     Octagon::Octagon(double l, const Point &center) : l(l) {
-        auto delta = l / std::sqrt(2);
+        auto delta = l / std::numbers::sqrt2;
         auto startP = Point{center.x + l / 2, center.y - l/2 - delta};
 
         points = {

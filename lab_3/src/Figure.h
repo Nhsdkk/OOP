@@ -4,13 +4,16 @@
 #include <vector>
 #include <ostream>
 #include <iostream>
+#include <cmath>
+#include <limits>
 
 namespace Shape {
+    const auto eps = 1e-15;
 
     struct Point {
       double x, y;
       bool operator== (const Point& other) const{
-          return x == other.x && y == other.y;
+          return std::fabs(x - other.x) < eps && std::fabs(y - other.y) < eps;
       }
       friend std::istream& operator>>(std::istream& is, Point& point){
           std::cout << "Enter x and y of the point: ";
@@ -30,6 +33,8 @@ namespace Shape {
             Figure(Figure&& figure) noexcept;
             Figure& operator=(const Figure& other);
             Figure& operator=(Figure&& other)  noexcept ;
+
+            Point operator[](size_t idx);
 
             friend std::ostream& operator<< (std::ostream& os, const Figure& figure);
             friend std::istream& operator>> (std::istream& is, Figure& figure);

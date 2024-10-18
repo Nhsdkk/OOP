@@ -43,7 +43,7 @@ namespace Shape {
         points = std::move(figure.points);
     }
 
-    Figure::Figure(std::initializer_list<Point> pts) {
+    Figure::Figure(const std::initializer_list<Point> pts) {
         for (auto& p: pts){
             points.push_back(Point{p.x, p.y});
         }
@@ -83,5 +83,10 @@ namespace Shape {
             area += p1.x * p2.y - p2.x * p1.y;
         }
         return 0.5 * std::abs(area);
+    }
+
+    Point Figure::operator[](size_t idx) {
+        auto p = points.at(idx);
+        return Point(p.x, p.y);
     }
 }

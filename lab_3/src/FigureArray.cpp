@@ -5,7 +5,7 @@ namespace Shape {
         return static_cast<size_t>(std::pow(2, std::ceil(std::log2(newSize))));
     }
 
-    FigureArray::FigureArray(std::initializer_list<Figure *> list) : FigureArray(static_cast<size_t>(list.size())) {
+    FigureArray::FigureArray(const std::initializer_list<Figure *> list) : FigureArray(static_cast<size_t>(list.size())) {
         auto i = 0;
         for (auto& fig : list){
             figures[i++] = fig;
@@ -30,7 +30,7 @@ namespace Shape {
         totalArea += double(*figure);
     }
 
-    void FigureArray::remove_at(size_t idx) {
+    void FigureArray::remove_at(const size_t idx) {
         if (idx >= size) throw std::out_of_range("Invalid index");
         totalArea -= double(*figures[idx]);
         for (size_t i = idx; i < size - 1; ++i){
@@ -38,7 +38,7 @@ namespace Shape {
         }
     }
 
-    Figure *FigureArray::operator[](size_t idx) const {
+    Figure *FigureArray::operator[](const size_t idx) const {
         if (idx >= size) throw std::out_of_range("Invalid index");
         return figures[idx];
     }
@@ -48,7 +48,7 @@ namespace Shape {
         figures = nullptr;
     }
 
-    FigureArray::FigureArray(size_t size) : size(size) {
+    FigureArray::FigureArray(const size_t size) : size(size) {
         totalArea = 0;
         capacity = calculate_capacity(size);
         figures = static_cast<Figure **>(std::malloc(sizeof(Figure *) * capacity));

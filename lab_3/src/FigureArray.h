@@ -6,7 +6,6 @@
 #ifndef OOP_LAB_3_SRC_FIGUREARRAY_H_
 #define OOP_LAB_3_SRC_FIGUREARRAY_H_
 
-
 namespace Shape {
     size_t calculate_capacity(size_t newSize);
 
@@ -35,7 +34,7 @@ namespace Shape {
                 return size;
             }
 
-            double get_total_area() const {
+            double get_summary_area() const {
                 return totalArea;
             }
 

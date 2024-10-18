@@ -11,8 +11,8 @@ class Square : public Figure {
     public:
         Square() : Figure({Point{0,0}, Point{0,1}, Point{1,1}, Point{1,0}}), l(1) {}
         Square(std::initializer_list<Point> points);
-        Square(double l, Point& center);
-        Square(Point& p1, Point& p2);
+        Square(double l, const Point& center);
+        Square(const Point& p1, const Point& p2);
 
         Square(const Square& square);
         Square(Square&& square) noexcept;

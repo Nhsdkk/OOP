@@ -12,22 +12,18 @@ namespace Shape {
     }
 
     Triangle::operator double() const {
-//        auto p1 = points[0];
-//        auto p2 = points[0];
-//        auto p3 = points[0];
-//        return 0.5 * std::abs((p2.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p2.y - p1.y));
         return pow(l, 2) * std::sqrt(3) / 4;
     }
 
     Triangle::Triangle(double l, const Point &center) : l(l) {
-        double h {l * std::sqrt(3) / 2};
+        double h {l * std::numbers::sqrt3 / 2.0};
 
-        points.push_back(Point{center.x - l / 2, center.y - h / 3});
-        points.push_back(Point{center.x + l / 2, center.y - h / 3});
-        points.push_back(Point{center.x, center.y + 2 * h / 3});
+        points.push_back(Point{center.x - l / 2.0, center.y - h / 3.0});
+        points.push_back(Point{center.x + l / 2.0, center.y - h / 3.0});
+        points.push_back(Point{center.x, center.y + 2.0 * h / 3.0});
     }
 
-    Triangle::Triangle(std::initializer_list<Point> p) : Figure(p) {
+    Triangle::Triangle(const std::initializer_list<Point> p) : Figure(p) {
         l = std::sqrt(std::pow(points[0].x - points[1].x, 2) + std::pow(points[0].y - points[1].y, 2));
     }
 

@@ -1,7 +1,8 @@
 #include "Square.h"
+#include <limits>
 
 namespace Shape {
-    Square::Square(double l, Point &center) : l(l) {
+    Square::Square(const double l, const Point &center) : l(l) {
         double l2 {l/2};
 
         points.push_back(Point{center.x + l2, center.y + l2});
@@ -13,7 +14,7 @@ namespace Shape {
         tr = Point{center.x + l2, center.y + l2};
     }
 
-    Square::Square(Point &p1, Point &p2) {
+    Square::Square(const Point &p1, const Point &p2) {
         l = std::abs(p1.x - p2.x);
         double minX {std::min(p1.x, p2.x)}, minY {std::min(p1.y, p2.y)};
 
@@ -26,8 +27,8 @@ namespace Shape {
         bl = Point{minX, minY};
     }
 
-    Square::Square(std::initializer_list<Point> pts) : Figure(pts) {
-        double minX, minY, maxX, maxY;
+    Square::Square(const std::initializer_list<Point> pts) : Figure(pts) {
+        double minX {std::numeric_limits<double>::max()}, minY {std::numeric_limits<double>::max()}, maxX {std::numeric_limits<double>::min()}, maxY {std::numeric_limits<double>::min()};
         for (auto& p : pts){
             minX = std::min(minX, p.x);
             maxX = std::max(maxX, p.x);
