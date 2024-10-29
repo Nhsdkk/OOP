@@ -1,6 +1,3 @@
-#ifndef OOP_LAB_3_SRC_SQUARE_H_
-#define OOP_LAB_3_SRC_SQUARE_H_
-
 #include "Figure.h"
 namespace Shape {
 
@@ -19,7 +16,10 @@ class Square : public Figure<T> {
         }), l(1) {}
 
         Square(std::initializer_list<Point<T>> pts) : Figure<T>(pts) {
-            T minX {std::numeric_limits<T>::max()}, minY {std::numeric_limits<T>::max()}, maxX {std::numeric_limits<T>::min()}, maxY {std::numeric_limits<T>::min()};
+            T minX {std::numeric_limits<T>::max()},
+            minY {std::numeric_limits<T>::max()},
+            maxX {std::numeric_limits<T>::min()},
+            maxY {std::numeric_limits<T>::min()};
             for (auto& p : pts){
                 minX = std::min(minX, p.x);
                 maxX = std::max(maxX, p.x);
@@ -33,7 +33,7 @@ class Square : public Figure<T> {
             bl = std::make_unique<Point<T>>(Point{minX, minY});
         }
 
-        Square(const Point<T>& p1, const Point<T>& p2){
+        Square(const Point<T>& p1, const Point<T>& p2): Figure<T>(){
             l = std::abs(p1.x - p2.x);
             T minX {std::min(p1.x, p2.x)}, minY {std::min(p1.y, p2.y)};
 
@@ -48,8 +48,8 @@ class Square : public Figure<T> {
 
         Square(const Square& square): Figure<T>(square) {
             l = square.l;
-            tr = std::make_unique(Point(square.tr->x, square.tr->y));
-            bl = std::make_unique(Point(square.bl->x, square.bl->y));
+            tr = std::make_unique<Point<T>>(Point(square.tr->x, square.tr->y));
+            bl = std::make_unique<Point<T>>(Point(square.bl->x, square.bl->y));
         }
 
         Square(Square<T>&& square) noexcept {
@@ -108,5 +108,3 @@ class Square : public Figure<T> {
     };
 
 }
-
-#endif

@@ -13,7 +13,7 @@ namespace Shape {
         protected:
             std::vector<std::unique_ptr<Point<T>>> points;
         public:
-            Figure() : points({}) {}
+            Figure() : points() {}
             Figure(std::initializer_list<Point<T>> pts){
                 for (auto p: pts){
                     points.emplace_back(std::make_unique<Point<T>>(p));

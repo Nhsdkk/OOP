@@ -8,6 +8,7 @@ add_library(${SubProjectName}_lib
         ./src/Point.h
         ./src/Figure.h
         ./src/Figure.cpp
+        ./src/FigureArray.h
 )
 add_executable(${SubProjectName}_exe main.cpp)
 

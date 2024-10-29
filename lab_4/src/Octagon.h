@@ -1,8 +1,7 @@
-#ifndef OOP_LAB_3_SRC_OCTAGON_H_
-#define OOP_LAB_3_SRC_OCTAGON_H_
-
+#pragma once
 #include "Figure.h"
 #include <cmath>
+#include <numbers>
 
 namespace Shape {
     template<Numeric T>
@@ -75,5 +74,3 @@ namespace Shape {
     };  
 
 }
-
-#endif
