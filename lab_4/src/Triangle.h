@@ -1,6 +1,7 @@
 #pragma once
 #include "Figure.h"
 #include <cmath>
+#include <numbers>
 
 namespace Shape {
 
@@ -16,6 +17,14 @@ namespace Shape {
             }), l(2) {}
             Triangle(std::initializer_list<Point<T>> p) : Figure<T>(p) {
                 l = std::sqrt(std::pow(points[0]->x - points[1]->x, 2) + std::pow(points[0]->y - points[1]->y, 2));
+            }
+
+            Triangle(double l, const Point<T> &center) : l(l) {
+                double h {l * std::numbers::sqrt3 / 2.0};
+
+                points.emplace_back(std::make_unique<Point<T>>(Point<T>{center.x - l / 2.0, center.y - h / 3.0}));
+                points.emplace_back(std::make_unique<Point<T>>(Point<T>{center.x + l / 2.0, center.y - h / 3.0}));
+                points.emplace_back(std::make_unique<Point<T>>(Point<T>{center.x, center.y + 2.0 * h / 3.0}));
             }
 
             Triangle(const Triangle<T>& triangle) : Figure<T>(triangle) {

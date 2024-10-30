@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <cmath>
+#include <array>
 #include "../src/Square.h"
 #include "../src/Triangle.h"
 #include "../src/FigureArray.h"
@@ -27,6 +28,22 @@ TEST(SquareTests ,Should_CalculateAreaAndCenterCorrectly_When_CreatingWithCorner
     ASSERT_EQ(double(square), 4);
 }
 
+TEST(SquareTests ,Should_CreatePointsCorrectly_When_CreatingWithCenterAndL){
+    auto center = Shape::Point<double>{1, 1};
+    auto square = Shape::Square<double>(center, 4.0);
+
+    auto points = std::array<Shape::Point<double>, 4>{
+        Shape::Point<double>{3,3},
+        Shape::Point<double>{3,-1},
+        Shape::Point<double>{-1,3},
+        Shape::Point<double>{-1,-1}
+    };
+
+    for (auto idx = 0; idx < 4; ++idx){
+        ASSERT_EQ(square[idx], points[idx]);
+    }
+}
+
 TEST(TriangleTests ,Should_CalculateAreaAndCenterCorrectly_When_CreatingWithPoints){
     auto triangle = Shape::Triangle({
         Shape::Point<double>{0,0},
@@ -38,37 +55,41 @@ TEST(TriangleTests ,Should_CalculateAreaAndCenterCorrectly_When_CreatingWithPoin
     ASSERT_EQ(double(triangle), pow(2, 2) * std::sqrt(3) / 4);
 }
 
-//TEST(TriangleTests ,Should_CreatePointsCorrectly_When_CreatingWithCenterAndL){
-//    auto center = Shape::Point{1, 1};
-//    auto triangle = Shape::Triangle(4, center);
-//
-//    auto points = std::array<Shape::Point, 3>{
-//        Shape::Point{-1,1 - 4 * std::cos(std::numbers::pi / 6) / 3},
-//        Shape::Point{3, 1 - 4 * std::cos(std::numbers::pi / 6) / 3},
-//        Shape::Point{1, 1 + 8 * std::cos(std::numbers::pi / 6) / 3},
-//    };
-//
-//    for (auto idx = 0; idx < 3; ++idx){
-//        ASSERT_EQ(triangle[idx], points[idx]);
-//    }
-//}
+TEST(TriangleTests ,Should_CreatePointsCorrectly_When_CreatingWithCenterAndL){
+    auto center = Shape::Point<double>{1, 1};
+    auto triangle = Shape::Triangle(4, center);
 
-//TEST(TriangleTests ,Should_CalculateAreaAndCenterCorrectly_When_CreatingWithCenterAndL){
-//    auto center = Shape::Point{1, 1};
-//    auto triangle = Shape::Triangle(2, center);
-//    ASSERT_EQ(triangle.get_center(), center);
-//    ASSERT_EQ(double(triangle), pow(2, 2) * std::sqrt(3) / 4);
-//}
+    auto points = std::array<Shape::Point<double>, 3>{
+        Shape::Point<double>{-1,1 - 4 * std::cos(std::numbers::pi / 6) / 3},
+        Shape::Point<double>{3, 1 - 4 * std::cos(std::numbers::pi / 6) / 3},
+        Shape::Point<double>{1, 1 + 8 * std::cos(std::numbers::pi / 6) / 3},
+    };
 
-//TEST(ArrayTests, Should_CalculateArrayAreaCorrectly_When_CreatingWithInitializerArray){
-//    auto triangle = Shape::Triangle({Shape::Point<double>{0,0}, Shape::Point<double>{0,2}, Shape::Point<double>{1,std::sqrt(3)}});
-//    auto p1 = Shape::Point<double>{0,0}, p2 = Shape::Point<double>{2, 2};
-//    auto square = Shape::Square(p1, p2);
-//    auto square1 = Shape::Square(p1, p2);
-//
-//    auto list = Shape::FigureArray<std::unique_ptr<Shape::Figure<double>>>({triangle, square, square1});
-//    ASSERT_EQ(list.get_summary_area(), 8 + pow(2, 2) * std::sqrt(3) / 4);
-//}
+    for (auto idx = 0; idx < 3; ++idx){
+        ASSERT_EQ(triangle[idx], points[idx]);
+    }
+}
+
+TEST(TriangleTests ,Should_CalculateAreaAndCenterCorrectly_When_CreatingWithCenterAndL){
+    auto center = Shape::Point<double>{1, 1};
+    auto triangle = Shape::Triangle(2, center);
+    ASSERT_EQ(triangle.get_center(), center);
+    ASSERT_EQ(double(triangle), pow(2, 2) * std::sqrt(3) / 4);
+}
+
+TEST(ArrayTests, Should_CalculateArrayAreaCorrectly_When_CreatingWithInitializerArray){
+    auto triangle = Shape::Triangle({Shape::Point<double>{0,0}, Shape::Point<double>{0,2}, Shape::Point<double>{1,std::sqrt(3)}});
+    auto p1 = Shape::Point<double>{0,0}, p2 = Shape::Point<double>{2, 2};
+    auto square = Shape::Square(p1, p2);
+    auto square1 = Shape::Square(p1, p2);
+
+    auto list = Shape::FigureArray<Shape::Figure<double> *, double>({
+        &triangle,
+        &square,
+        &square1
+    });
+    ASSERT_EQ(list.get_summary_area(), 8 + pow(2, 2) * std::sqrt(3) / 4);
+}
 
 TEST(ArrayTests, Should_EveryElementBeAccessible_When_CreatingWithInitializerArray){
     auto triangle = Shape::Triangle({Shape::Point<double>{0,0}, Shape::Point<double>{0,2}, Shape::Point<double>{1,std::sqrt(3)}});
@@ -76,7 +97,15 @@ TEST(ArrayTests, Should_EveryElementBeAccessible_When_CreatingWithInitializerArr
     auto square = Shape::Square(p1, p2);
     auto square1 = Shape::Square(p1, p2);
 
-    auto list = Shape::FigureArray<Shape::Figure<double>*, double>({&triangle, &square, &square1});
+    std::vector<Shape::Figure<double>*> vector = {
+        &triangle, &square, &square1
+    };
+
+    auto list = Shape::FigureArray<Shape::Figure<double>*, double>({
+        &triangle,
+        &square,
+        &square1
+    });
 
     ASSERT_EQ(double(*list[0]), pow(2, 2) * std::sqrt(3) / 4);
     ASSERT_EQ(double(*list[1]), 4);
@@ -176,34 +205,34 @@ TEST(OctagonTests ,Should_CalculateAreaAndCenterCorrectly_When_CreatingWithPoint
     ASSERT_EQ(double(octagon), 2 * pow(1, 2) * (std::sqrt(2) + 1));
 }
 
-//TEST(OctagonTests ,Should_CalculateAreaAndCenterCorrectly_When_CreatingWithCenterAndL){
-//    auto center = Shape::Point{1.0, 1.0};
-//    auto octagon = Shape::Octagon(2, center);
-//    ASSERT_EQ(octagon.get_center(), center);
-//    ASSERT_EQ(double(octagon), 2 * pow(2, 2) * (std::sqrt(2) + 1));
-//}
+TEST(OctagonTests ,Should_CalculateAreaAndCenterCorrectly_When_CreatingWithCenterAndL){
+    auto center = Shape::Point<double>{1.0, 1.0};
+    auto octagon = Shape::Octagon<double>(2, center);
+    ASSERT_EQ(octagon.get_center(), center);
+    ASSERT_EQ(double(octagon), 2 * pow(2, 2) * (std::sqrt(2) + 1));
+}
 
-//TEST(OctagonTests ,Should_CreatePointsCorrectly_When_CreatingWithCenterAndL){
-//    auto center = Shape::Point{1.0, 1.0};
-//    auto octagon = Shape::Octagon(2, center);
-//
-//    auto startP = Shape::Point{2, - 2 / std::numbers::sqrt2};
-//
-//    auto points = std::array<Shape::Point, 8>{
-//        startP,
-//        Shape::Point{startP.x - 2, startP.y},
-//        Shape::Point{startP.x - 2 - 2 / std::numbers::sqrt2, startP.y + 2 / std::numbers::sqrt2},
-//        Shape::Point{startP.x - 2 - 2 / std::numbers::sqrt2, startP.y + 2 + 2 / std::numbers::sqrt2},
-//        Shape::Point{startP.x - 2, startP.y + 2 + 4 / std::numbers::sqrt2},
-//        Shape::Point{startP.x, startP.y + 2 + 4 / std::numbers::sqrt2},
-//        Shape::Point{startP.x + 2 / std::numbers::sqrt2, startP.y + 2 + 2 / std::numbers::sqrt2},
-//        Shape::Point{startP.x + 2 / std::numbers::sqrt2, startP.y + 2 / std::numbers::sqrt2}
-//    };
-//
-//    for (auto idx = 0; idx < 8; ++idx){
-//        ASSERT_EQ(octagon[idx], points[idx]);
-//    }
-//}
+TEST(OctagonTests ,Should_CreatePointsCorrectly_When_CreatingWithCenterAndL){
+    auto center = Shape::Point{1.0, 1.0};
+    auto octagon = Shape::Octagon<double>(2.0, center);
+
+    auto startP = Shape::Point<double>{2, - 2 / std::numbers::sqrt2};
+
+    auto points = std::array<Shape::Point<double>, 8>{
+        startP,
+        Shape::Point{startP.x - 2, startP.y},
+        Shape::Point{startP.x - 2 - 2 / std::numbers::sqrt2, startP.y + 2 / std::numbers::sqrt2},
+        Shape::Point{startP.x - 2 - 2 / std::numbers::sqrt2, startP.y + 2 + 2 / std::numbers::sqrt2},
+        Shape::Point{startP.x - 2, startP.y + 2 + 4 / std::numbers::sqrt2},
+        Shape::Point{startP.x, startP.y + 2 + 4 / std::numbers::sqrt2},
+        Shape::Point{startP.x + 2 / std::numbers::sqrt2, startP.y + 2 + 2 / std::numbers::sqrt2},
+        Shape::Point{startP.x + 2 / std::numbers::sqrt2, startP.y + 2 / std::numbers::sqrt2}
+    };
+
+    for (auto idx = 0; idx < 8; ++idx){
+        ASSERT_EQ(octagon[idx], points[idx]);
+    }
+}
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);

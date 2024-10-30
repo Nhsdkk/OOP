@@ -11,21 +11,10 @@ namespace Shape {
         return static_cast<size_t>(std::pow(2, std::ceil(std::log2(newSize))));
     }
 
-    template<class T> struct is_pointer { enum {Value = false}; };
-    template<class T> struct is_pointer<T*> { enum {Value = true};};
-    template<class T> struct is_pointer<std::unique_ptr<T>> { enum {Value = true};};
-    template<class T> struct is_pointer<std::shared_ptr<T>> { enum {Value = true};};
-    template<class T> struct is_pointer<std::weak_ptr<T>> { enum {Value = true};};
-
-    template<class T> struct remove_pointer { typedef T type; };
-    template<class T> struct remove_pointer<T*> { typedef T type; };
-    template<class T> struct remove_pointer<std::unique_ptr<T>> { typedef T type; };
-    template<class T> struct remove_pointer<std::shared_ptr<T>> { typedef T type; };
-    template<class T> struct remove_pointer<std::weak_ptr<T>> { typedef T type; };
 
 
     template<class T, class U>
-    concept FigureOrPtr = std::derived_from<typename remove_pointer<T>::type, Figure<U>>;
+    concept FigureOrPtr = std::derived_from<std::remove_pointer_t<T>, Figure<U>> && Numeric<U>;
 
     template<class T, class U>
     requires FigureOrPtr<T, U>
@@ -41,19 +30,27 @@ namespace Shape {
 
         public:
             FigureArray() : figures(nullptr), size(0), capacity(0), totalArea(0) {};
-            FigureArray(std::initializer_list<T> list) : FigureArray(static_cast<size_t>(list.size())) {
+            FigureArray(std::initializer_list<T> list) requires(!std::is_pointer_v<T>): FigureArray(static_cast<size_t>(list.size())) {
                 auto i = 0;
                 for (auto& fig : list){
                     figures[i++] = fig;
-                    totalArea += double(*fig);
+                    totalArea += double(fig);
+                }
+            }
+
+            FigureArray(std::initializer_list<T> list) requires(std::is_pointer_v<T>): FigureArray(static_cast<size_t>(list.size())) {
+                auto i = 0;
+                for (auto item: list){
+                    figures[i++] = item;
+                    totalArea += double(*item);
                 }
             }
             
-            explicit FigureArray(const FigureArray<T, U>& array) : FigureArray(array.size){
+            FigureArray(const FigureArray<T, U>& array) : FigureArray(array.size){
                 totalArea = array.totalArea;
                 capacity = array.capacity;
                 for (auto i = 0; i < size; ++i){
-                    figures[i] = is_pointer<T>::Value ? *array.figures[i] : array.figures[i];
+                    figures[i] = array.figures[i];
                 }
             }
 
@@ -90,12 +87,12 @@ namespace Shape {
             }
 
             void push_back(T figure) requires (!std::is_pointer_v<T>){
-              if (capacity == 0){
+                if (capacity == 0){
                   figures = std::make_unique<T[]>(1);
                   capacity = 1;
-              }
+                }
 
-              if (size == capacity){
+                if (size == capacity){
                   capacity = calculate_capacity(size + 1);
                   auto fig1 = std::move(figures);
                   figures = std::make_unique<T[]>(capacity);
@@ -103,12 +100,12 @@ namespace Shape {
                   for (auto i = 0; i < size; ++i){
                       figures[i] = std::move(fig1[i]);
                   }
-              }
+                }
 
-              figures[size] = std::move(figure);
-              size++;
+                figures[size] = std::move(figure);
+                size++;
 
-              totalArea += double (figure);
+                totalArea += double (figure);
             }
 
             void push_back(T figure) requires (std::is_pointer_v<T>){

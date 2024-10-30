@@ -6,5 +6,7 @@
 #include "src/Octagon.h"
 
 int main() {
-    auto tr = Shape::Octagon<double>({Shape::Point{1.0, 2.0}});
+    auto center = Shape::Point<double >{1, 1};
+    auto square1 = std::make_unique<Shape::Figure<double>>(Shape::Figure{center, center, center});
+    auto s1 = std::move(square1);
 }

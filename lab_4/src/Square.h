@@ -1,3 +1,4 @@
+#pragma once
 #include "Figure.h"
 namespace Shape {
 
@@ -14,6 +15,18 @@ class Square : public Figure<T> {
             Point<T>{1,1},
             Point<T>{1,0}
         }), l(1) {}
+
+        Square(const Point<T> &center, const double l) : l(l) {
+            double l2 {l/2};
+
+            points.emplace_back(std::make_unique<Point<T>>(Point<T>{center.x + l2, center.y + l2}));
+            points.emplace_back(std::make_unique<Point<T>>(Point<T>{center.x + l2, center.y - l2}));
+            points.emplace_back(std::make_unique<Point<T>>(Point<T>{center.x - l2, center.y + l2}));
+            points.emplace_back(std::make_unique<Point<T>>(Point<T>{center.x - l2, center.y - l2}));
+
+            bl = std::make_unique<Point<T>>(Point<T>{center.x - l2, center.y - l2});
+            tr = std::make_unique<Point<T>>(Point<T>{center.x + l2, center.y + l2});
+        }
 
         Square(std::initializer_list<Point<T>> pts) : Figure<T>(pts) {
             T minX {std::numeric_limits<T>::max()},

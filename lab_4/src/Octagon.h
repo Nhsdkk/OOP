@@ -38,10 +38,25 @@ namespace Shape {
                 points = std::move(copy.points);
                 return *this;
             }
+
             Octagon& operator=(Octagon<T>&& other) noexcept {
                 l = other.l;
                 points = std::move(other.points);
                 return *this;
+            }
+
+            Octagon(double l, const Point<T> &center) : l(l) {
+                auto delta = l / std::numbers::sqrt2;
+                auto startP = Point<T>{center.x + l / 2, center.y - l/2 - delta};
+
+                points.emplace_back(std::make_unique<Point<T>>(startP));
+                points.emplace_back(std::make_unique<Point<T>>(Shape::Point<T>{startP.x - l, startP.y}));
+                points.emplace_back(std::make_unique<Point<T>>(Shape::Point<T>{startP.x - l - delta, startP.y + delta}));
+                points.emplace_back(std::make_unique<Point<T>>(Shape::Point<T>{startP.x - l - delta, startP.y + delta + l}));
+                points.emplace_back(std::make_unique<Point<T>>(Shape::Point<T>{startP.x - l, startP.y + 2 * delta + l}));
+                points.emplace_back(std::make_unique<Point<T>>(Shape::Point<T>{startP.x, startP.y + 2 * delta + l}));
+                points.emplace_back(std::make_unique<Point<T>>(Shape::Point<T>{startP.x + delta, startP.y + delta + l}));
+                points.emplace_back(std::make_unique<Point<T>>(Shape::Point<T>{startP.x + delta, startP.y + delta}));
             }
 
             friend std::istream& operator>> (std::istream& is, Octagon<T>& octagon) {

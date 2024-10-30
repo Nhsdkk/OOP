@@ -42,7 +42,7 @@ namespace Shape {
             }
 
             Point<T> operator[](size_t idx){
-                auto p = points.at(idx);
+                auto p = *points.at(idx);
                 return Point(p.x, p.y);
             }
 
