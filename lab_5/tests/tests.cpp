@@ -47,20 +47,44 @@ TEST(VectorTests, ShouldRemoveItemCorrectly){
     ASSERT_TRUE(cmp(vec1, vec2));
 }
 
-TEST(VectorTests, ShouldPopBackItemCorrectly){
+TEST(VectorTests, ShouldCreateCorrectlyWithComplicatedType){
     CustomContainers::CustomMemoryResource customResource;
-    std::pmr::polymorphic_allocator<int> allocator(&customResource);
+    std::pmr::polymorphic_allocator<std::pair<int, int>> allocator(&customResource);
 
-    auto vec1 = CustomContainers::CustomVector<int, std::pmr::polymorphic_allocator<std::pair<int, int>>>({1,2,3}, allocator);
-    vec1.pop_back();
-    auto vec2 = std::vector<int>({1,2});
+    auto vec1 = CustomContainers::CustomVector<std::pair<int, int>, std::pmr::polymorphic_allocator<std::pair<int, int>>>(allocator);
+
+    vec1.push_back(std::pair(1,2));
+    vec1.push_back(std::pair(3,4));
+    vec1.push_back(std::pair(5,6));
+
+    auto vec2 = std::vector<std::pair<int, int>>({
+        std::pair(1,2),
+        std::pair(3,4),
+        std::pair(5,6)
+    });
 
     ASSERT_TRUE(cmp(vec1, vec2));
 }
 
 TEST(AllocatorTests, ShouldCreateUsedBlocksCorrectly){
-    CustomContainers::CustomMemoryResource customResource;
+    CustomContainers::CustomMemoryResource<16> customResource;
     std::pmr::polymorphic_allocator<int> allocator(&customResource);
+
+    auto vec1 = CustomContainers::CustomVector<int, std::pmr::polymorphic_allocator<int>>({1,2,3}, allocator);
+
+    auto blocks = customResource.get_used_blocks();
+
+    ASSERT_EQ(blocks.size(), 1);
+    ASSERT_EQ(*blocks.begin(), CustomContainers::Block(0, 15, 0));
+
+    vec1.push_back(4);
+    vec1.push_back(5);
+
+    blocks = customResource.get_used_blocks();
+
+    ASSERT_EQ(blocks.size(), 1);
+    ASSERT_EQ(*blocks.begin(), CustomContainers::Block(0, 31, 3));
+
 }
 
 int main(int argc, char **argv) {

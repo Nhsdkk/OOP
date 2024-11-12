@@ -98,10 +98,13 @@ namespace CustomContainers {
             void push_back(T item){
                 size++;
                 if (size > capacity){
+                    auto old_capacity = capacity;
                     capacity = calculate_capacity(size);
                     T* newData = allocator.allocate(capacity);
                     memcpy(newData, data.get(), (size - 1) * sizeof (T));
+                    allocator.deallocate(data.get(), old_capacity);
                     data = std::unique_ptr<T, PolymorphicDeleter>(newData, PolymorphicDeleter{});
+
                 }
                 data.get()[size - 1] = item;
             }
