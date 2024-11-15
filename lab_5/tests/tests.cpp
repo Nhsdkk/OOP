@@ -5,8 +5,10 @@
 template<class T>
 bool cmp(CustomContainers::CustomVector<T, std::pmr::polymorphic_allocator<T>> vec1, std::vector<T> vec2){
     if (vec1.get_size() != vec2.size()) return false;
-    for (auto i = 0; i < vec1.get_size(); ++i){
-        if (vec1[i] != vec2[i]) return false;
+    auto i = 0;
+    for (auto item1 : vec1){
+        if (item1 != vec2[i]) return false;
+        ++i;
     }
     return true;
 }

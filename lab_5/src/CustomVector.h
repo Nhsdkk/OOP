@@ -80,11 +80,11 @@ namespace CustomContainers {
             }
 
             CustomIterator<T, CustomVector<T, alloc_t>> begin() {
-                return new CustomIterator<T, CustomVector<T, alloc_t>>(this, 0, size);
+                return CustomIterator<T, CustomVector<T, alloc_t>>(this, 0, size);
             }
 
             CustomIterator<T, CustomVector<T, alloc_t>> end() {
-                return new CustomIterator<T, CustomVector<T, alloc_t>>(this, size, size);
+                return CustomIterator<T, CustomVector<T, alloc_t>>(this, size, size);
             }
 
             size_t get_size(){
