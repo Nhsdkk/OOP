@@ -10,6 +10,12 @@ namespace CustomContainers {
         size_t size;
 
         public:
+            using difference_type = int;
+            using value_type = ItemT;
+            using reference = ItemT&;
+            using pointer = ItemT*;
+            using iterator_category = std::forward_iterator_tag;
+
             CustomIterator(ArrayT* array, size_t idx, size_t size) : array(array), idx(idx), size(size) {}
 
             ItemT operator*(){
