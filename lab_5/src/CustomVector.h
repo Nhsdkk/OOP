@@ -102,7 +102,9 @@ namespace CustomContainers {
                     capacity = calculate_capacity(size);
                     T* newData = allocator.allocate(capacity);
                     memcpy(newData, data.get(), (size - 1) * sizeof (T));
-                    allocator.deallocate(data.get(), old_capacity);
+                    if (data != nullptr){
+                        allocator.deallocate(data.get(), old_capacity);
+                    }
                     data = std::unique_ptr<T, PolymorphicDeleter>(newData, PolymorphicDeleter{});
 
                 }
@@ -115,6 +117,9 @@ namespace CustomContainers {
 
             void remove_at(size_t idx) {
                 if (idx >= size) throw std::out_of_range("The index is beyond the bounds of the container");
+                if constexpr (std::is_destructible_v<T>){
+                    std::allocator_traits<alloc_t>::destroy(allocator, data.get() + idx);
+                }
                 for (auto i = idx; i < size - 1; ++i){
                     data.get()[i] = data.get()[i + 1];
                 }
