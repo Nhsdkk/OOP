@@ -7,8 +7,9 @@
 namespace CustomContainers {
 
     class Block {
+        size_t start, end, blockId;
+
         public:
-            size_t start, end, blockId;
             Block() = default;
             Block(size_t start, size_t end, size_t blockId) : start(start), end(end), blockId(blockId) {}
 
@@ -21,6 +22,11 @@ namespace CustomContainers {
                 blockId = block.blockId;
                 return *this;
             };
+
+            size_t get_start() { return start; }
+            size_t get_end() { return end; }
+            size_t get_block_id() { return blockId; }
+
 
             ~Block() = default;
 
@@ -42,12 +48,12 @@ namespace CustomContainers {
                 size_t prev_end = 0;
                 long long block_idx = -1;
                 for (auto& block : used_blocks){
-                    if (block.blockId != block_idx) {
-                        block_idx = block.blockId;
+                    if (block.get_block_id() != block_idx) {
+                        block_idx = block.get_block_id();
                         prev_end = 0;
                     }
-                    if (block.start - prev_end >= bytes) break;
-                    prev_end = block.end + 1;
+                    if (block.get_start() - prev_end >= bytes) break;
+                    prev_end = block.get_end() + 1;
                 }
 
                 size_t start = prev_end;
@@ -75,15 +81,15 @@ namespace CustomContainers {
 
                 used_blocks.push_back(block);
                 used_blocks.sort([](auto& rval, auto& lval) {
-                    if (rval.start != lval.start) return rval.start < lval.start;
-                    return rval.blockId <= lval.blockId;
+                    if (rval.get_start() != lval.get_start()) return rval.get_start() < lval.get_start();
+                    return rval.get_block_id() <= lval.get_block_id();
                 });
-                return buffer[block_idx].get() + block.start;
+                return buffer[block_idx].get() + block.get_start();
             }
 
             void do_deallocate(void *p, std::size_t bytes, std::size_t alignment) override {
                 for (auto& item : used_blocks){
-                    if (p == buffer[item.blockId].get() + item.start){
+                    if (p == buffer[item.get_block_id()].get() + item.get_start()){
                         used_blocks.remove(item);
                         return;
                     }
