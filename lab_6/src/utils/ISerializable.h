@@ -15,6 +15,7 @@ namespace Utils {
     const std::regex valRegex("=\\S*");
     const std::regex fieldNameRegex("\\S*=");
     const std::regex objectRegex("\\S*=");
+    //const std::regex objectRegex("\={([\s\S]*)\}\n");
 
     template<class T>
     T getOrThrow(const std::string& str) {
