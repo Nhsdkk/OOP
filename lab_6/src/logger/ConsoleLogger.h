@@ -12,7 +12,7 @@ namespace Logger {
         std::ostream& os;
         public:
             ConsoleLogger() : os(std::cout) {};
-            explicit ConsoleLogger(std::ostream& ostr) : os(ostr) {};
+            explicit ConsoleLogger(std::ostream& ostr, std::string name) : ILogger(std::move(name)), os(ostr) {};
             void log(const std::string& str) const override {
                 os << str << std::endl;
             }

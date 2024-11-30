@@ -7,14 +7,16 @@
 
 #include <string>
 #include <stdexcept>
+#include <utility>
 namespace Logger {
 
 class ILogger {
+    std::string name;
     public:
-        ILogger() {}
-        //TODO: Use custom exception
-        virtual void log(const std::string& data) const { throw std::invalid_argument("Can't use logger interface"); }
-
+        ILogger() : name("Logger") {}
+        explicit ILogger(std::string  name) : name(std::move(name)) {}
+        virtual void log(const std::string& data) const = 0;
+        virtual ~ILogger() = default;
 
 };
 

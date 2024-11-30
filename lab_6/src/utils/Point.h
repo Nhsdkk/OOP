@@ -9,6 +9,7 @@
 #include <cmath>
 #include <iostream>
 #include "ISerializable.h"
+#include "JsonObject.h"
 namespace Utils {
 
 template <class T>
@@ -50,17 +51,17 @@ class Point : public ISerializable {
         std::string Serialize() const override {
             std::ostringstream oss;
             oss << "{" << std::endl;
-            oss << "X=" << x << std::endl;
-            oss << "Y=" << y << std::endl;
+            oss << "X=" << x << ";" << std::endl;
+            oss << "Y=" << y << ";" << std::endl;
             oss << "}";
             return oss.str();
         }
 
-        void Deserialize(const std::string& values) override {
-            auto m = toMap(values);
-
-            x = getOrThrow<double>(m["X"]);
-            y = getOrThrow<double>(m["Y"]);
+        void Deserialize(const Json::JsonObject& jsonObject) override {
+            if (jsonObject.getType() != Json::Map) throw std::invalid_argument("Can't parse value to point");
+            auto obj = jsonObject.getObject();
+            x = getOrThrow<double>(obj.at("X"));
+            y = getOrThrow<double>(obj.at("Y"));
         }
 };
 

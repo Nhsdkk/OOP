@@ -9,26 +9,27 @@
 #include <utility>
 #include "../utils/Point.h"
 #include "../utils/ISerializable.h"
+#include "../utils/IElement.h"
 #include "../logger/ILogger.h"
-#include "../utils/Vec2D.h"
+
 namespace NPC {
 
-    class BaseNpc : public Utils::ISerializable {
+    class BaseNpc : public Utils::ISerializable, public Utils::IElement<BaseNpc>{
         Utils::Point<double> pos;
-        Utils::Vec2D<double> range;
+        double range;
         std::string name;
         bool isAlive;
         std::shared_ptr<Logger::ILogger> logger;
 
         public:
-            BaseNpc() : pos(), name(), isAlive(false), logger(nullptr) {}
+            BaseNpc() : pos(), range(), name(), isAlive(false), logger(nullptr) {}
             BaseNpc(
                 const Utils::Point<double>& position,
-                const Utils::Vec2D<double>& range,
-                const std::string& name,
+                double range,
+                std::string  name,
                 const bool alive,
                 std::shared_ptr<Logger::ILogger> logger
-            ) : pos(position), name(name), isAlive(alive), logger(std::move(logger)), range(range) {}
+            ) : pos(position), name(std::move(name)), isAlive(alive), logger(std::move(logger)), range(range) {}
 
             virtual void kill(const std::string& killerName, const std::string& killerType){
                 if (logger == nullptr) return;
@@ -44,31 +45,38 @@ namespace NPC {
             }
 
             Utils::Point<double> getPos() const { return pos; }
+            double getRange() const { return range; }
             std::string getName() const { return name; }
             bool getIsAlive() const{ return isAlive; }
 
-            // TODO: Use custom exception
-            virtual std::string getType() const { throw std::invalid_argument("Unimplemented"); }
+            virtual std::string getType() const = 0;
 
             std::string Serialize() const override {
                 std::ostringstream oss;
                 oss << "{" << std::endl;
-                oss << "Pos=" << pos.Serialize() << std::endl;
-                oss << "Range=" << range.Serialize() << std::endl;
-                oss << "Name=" << name << std::endl;
-                oss << "IsAlive=" << (isAlive ? "true" : "false") << std::endl;
+                oss << "Position=" << pos.Serialize() << ";" << std::endl;
+                oss << "Range=" << range << ";" << std::endl;
+                oss << "Name=" << name << ";" << std::endl;
+                oss << "IsAlive=" << (isAlive ? "true" : "false") << ";" << std::endl;
                 oss << "}";
                 return oss.str();
             }
 
-            void Deserialize(const std::string& values) override {
-                auto m = Utils::toMap(values);
+            void Deserialize(const Json::JsonObject& jsonObject) override {
+                if (jsonObject.getType() != Json::Map) throw std::invalid_argument("Can't parse value to point");
+                auto obj = jsonObject.getObject();
 
                 pos = Utils::Point<double>();
-                pos.Deserialize(m["Position"]);
-                name = m["Name"];
-                isAlive = m["IsAlive"] == "true";
+                pos.Deserialize(obj.at("Position"));
+                range = Utils::getOrThrow<double>(obj.at("Range"));
+                name = Utils::getOrThrow<std::string>(obj.at("Name"));
+                isAlive = Utils::getOrThrow<std::string>(obj.at("IsAlive")) == "true";
             }
+
+            bool operator==(const BaseNpc& other) const {
+                return getIsAlive() == other.getIsAlive() && getName() == other.getName() && getPos() == other.getPos() && getRange() == other.getRange();
+            }
+            ~BaseNpc() override = default;
     };
 
 } // NPC

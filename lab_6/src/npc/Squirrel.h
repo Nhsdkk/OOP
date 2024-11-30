@@ -10,14 +10,16 @@ namespace NPC {
 
     class Squirrel : public BaseNpc  {
         public:
+            Squirrel(): BaseNpc() {}
             Squirrel(
                 const Utils::Point<double>& position,
-                const Utils::Vec2D<double>& range,
+                double range,
                 const std::string& name,
                 const bool alive,
                 std::shared_ptr<Logger::ILogger> logger
             ) : BaseNpc(position, range, name, alive, std::move(logger)) {}
             std::string getType() const override { return "Squirrel"; }
+
     };
 
 } // NPC

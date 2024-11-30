@@ -11,17 +11,6 @@ const inline std::string logResult = "String1\nString2\n";
 const inline std::string logInput1 = "String1";
 const inline std::string logInput2 = "String2";
 
-std::string Read(std::ifstream& file){
-    std::string buff;
-    std::string result;
-
-    while (std::getline(file, buff)){
-        result += buff + '\n';
-    }
-
-    return result;
-}
-
 void RemoveIfExists(const std::string& filename){
     if (std::filesystem::exists(filename)) std::filesystem::remove(filename);
 }
@@ -30,25 +19,34 @@ TEST(BackupLoaderTests, ShouldDumpAndLoadData){
     auto logger = std::make_shared<Logger::ConsoleLogger>();
 
     std::vector<std::shared_ptr<NPC::BaseNpc>> items {
-        std::make_shared<NPC::Bear>(Utils::Point<double>(1, 1), Utils::Vec2D<double>(1, 1), "name", false, logger),
-        std::make_shared<NPC::Elf>(Utils::Point<double>(2, 3), Utils::Vec2D<double>(1, 1), "name1", false, logger),
-        std::make_shared<NPC::Squirrel>(Utils::Point<double>(3, 3), Utils::Vec2D<double>(1, 1), "name2", true, logger)
+        std::make_shared<NPC::Bear>(Utils::Point<double>(1, 1), 1, "name", false, logger),
+        std::make_shared<NPC::Elf>(Utils::Point<double>(2, 3), 2, "name1", false, logger),
+        std::make_shared<NPC::Squirrel>(Utils::Point<double>(3, 3), 3, "name2", true, logger)
     };
 
     Backup::BackupHandler backupHandler;
     backupHandler.Backup(items);
+
+    Backup::BackupHandler backupHandler1;
+    auto state = backupHandler1.Load();
+
+    EXPECT_EQ(state.size(), items.size());
+
+    for (auto idx = 0; idx < items.size(); ++idx){
+        EXPECT_TRUE(*state[idx] == *items[idx]);
+    }
 }
 
 TEST(ConsoleLoggerTests, ShouldLogCorrectly){
     std::ostringstream oss;
-    auto logger = Logger::ConsoleLogger(oss);
+    auto logger = Logger::ConsoleLogger(oss, "name");
     logger.log(logInput1);
     logger.log(logInput2);
     EXPECT_EQ(oss.str(), logResult);
 }
 
 TEST(FileLoggerTests, ShouldLogCorrectly){
-    auto logger = Logger::FileLogger(outLogFileName);
+    auto logger = Logger::FileLogger(outLogFileName, "name");
     logger.log(logInput1);
     logger.log(logInput2);
 
@@ -56,7 +54,7 @@ TEST(FileLoggerTests, ShouldLogCorrectly){
 
     EXPECT_TRUE(file.good());
 
-    std::string result = Read(file);
+    std::string result = Utils::read(file);
     file.close();
     RemoveIfExists(outLogFileName);
 

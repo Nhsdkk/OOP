@@ -6,6 +6,7 @@
 #define OOP_LAB_6_SRC_FILELOGGER_H_
 
 #include <fstream>
+#include <utility>
 #include "ILogger.h"
 namespace Logger {
 
@@ -13,8 +14,8 @@ namespace Logger {
         std::string filename;
 
         public:
-            FileLogger() : filename("logs.txt"){}
-            FileLogger(const std::string& filename) : filename(filename){}
+            FileLogger() : ILogger(), filename("logs.txt") {}
+            FileLogger(std::string  filename, std::string name) : ILogger(std::move(name)), filename(std::move(filename)) {}
             void log(const std::string& str) const override {
                 std::ofstream file;
                 file.open(filename, std::ios_base::app);

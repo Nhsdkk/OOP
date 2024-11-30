@@ -13,9 +13,10 @@ namespace NPC {
 
     class Elf : public BaseNpc {
         public:
+            Elf(): BaseNpc() {}
             Elf(
                 const Utils::Point<double>& position,
-                const Utils::Vec2D<double>& range,
+                double range,
                 const std::string& name,
                 const bool alive,
                 std::shared_ptr<Logger::ILogger> logger
