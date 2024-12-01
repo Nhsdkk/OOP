@@ -9,73 +9,62 @@
 #include <utility>
 #include "../utils/Point.h"
 #include "../utils/ISerializable.h"
-#include "../utils/IElement.h"
 #include "../logger/ILogger.h"
+#include "../utils/Vec2D.h"
 
 namespace NPC {
+    class Elf;
+    class Squirrel;
+    class Thief;
 
-    class BaseNpc : public Utils::ISerializable, public Utils::IElement<BaseNpc>{
+    class BaseNpc : public Utils::ISerializable, public std::enable_shared_from_this<BaseNpc>{
         Utils::Point<double> pos;
         double range;
         std::string name;
         bool isAlive;
-        std::shared_ptr<Logger::ILogger> logger;
+        std::vector<std::shared_ptr<Logger::ILogger>> loggers;
 
         public:
-            BaseNpc() : pos(), range(), name(), isAlive(false), logger(nullptr) {}
+            BaseNpc() : pos(), range(), name(), isAlive(false), loggers() {}
             BaseNpc(
                 const Utils::Point<double>& position,
                 double range,
                 std::string  name,
                 const bool alive,
-                std::shared_ptr<Logger::ILogger> logger
-            ) : pos(position), name(std::move(name)), isAlive(alive), logger(std::move(logger)), range(range) {}
+                std::vector<std::shared_ptr<Logger::ILogger>> loggers
+            ) : pos(position), name(std::move(name)), isAlive(alive), loggers(std::move(loggers)), range(range) {}
+            BaseNpc(const BaseNpc& other) = default;
+            BaseNpc(BaseNpc&& other) noexcept = default;
 
-            virtual void kill(const std::string& killerName, const std::string& killerType){
-                if (logger == nullptr) return;
-                logger->log(std::format("{} of type {} got killed by {} of type {}", name, getType(), killerName, killerType));
-            }
+            BaseNpc& operator=(const BaseNpc& other) = default;
+            BaseNpc& operator=(BaseNpc&& other) noexcept;
 
-            void attachLogger(std::shared_ptr<Logger::ILogger> l) {
-                logger = std::move(l);
-            }
+            void kill(const std::shared_ptr<BaseNpc>& victim);
 
-            void detachLogger() {
-                logger = nullptr;
-            }
+            void attachLoggers(const std::vector<std::shared_ptr<Logger::ILogger>> &l);
 
-            Utils::Point<double> getPos() const { return pos; }
-            double getRange() const { return range; }
-            std::string getName() const { return name; }
-            bool getIsAlive() const{ return isAlive; }
+            void detachLogger(const std::string& loggerName);
+
+            Utils::Point<double> getPos() const;
+            double getRange() const;
+            std::string getName() const;
+            bool getIsAlive() const;
 
             virtual std::string getType() const = 0;
 
-            std::string Serialize() const override {
-                std::ostringstream oss;
-                oss << "{" << std::endl;
-                oss << "Position=" << pos.Serialize() << ";" << std::endl;
-                oss << "Range=" << range << ";" << std::endl;
-                oss << "Name=" << name << ";" << std::endl;
-                oss << "IsAlive=" << (isAlive ? "true" : "false") << ";" << std::endl;
-                oss << "}";
-                return oss.str();
-            }
+            virtual void accept(const std::shared_ptr<BaseNpc>& npc) = 0;
 
-            void Deserialize(const Json::JsonObject& jsonObject) override {
-                if (jsonObject.getType() != Json::Map) throw std::invalid_argument("Can't parse value to point");
-                auto obj = jsonObject.getObject();
+            virtual void visit(std::shared_ptr<Thief> npc) = 0;
+            virtual void visit(std::shared_ptr<Elf> npc) = 0;
+            virtual void visit(std::shared_ptr<Squirrel> npc) = 0;
 
-                pos = Utils::Point<double>();
-                pos.Deserialize(obj.at("Position"));
-                range = Utils::getOrThrow<double>(obj.at("Range"));
-                name = Utils::getOrThrow<std::string>(obj.at("Name"));
-                isAlive = Utils::getOrThrow<std::string>(obj.at("IsAlive")) == "true";
-            }
+            bool canAttack(const std::shared_ptr<BaseNpc>& victim) const;
 
-            bool operator==(const BaseNpc& other) const {
-                return getIsAlive() == other.getIsAlive() && getName() == other.getName() && getPos() == other.getPos() && getRange() == other.getRange();
-            }
+            std::string serialize() const override;
+
+            void deserialize(const Json::JsonObject& jsonObject) override;
+
+            bool operator==(const BaseNpc& other) const;
             ~BaseNpc() override = default;
     };
 

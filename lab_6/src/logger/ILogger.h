@@ -16,6 +16,10 @@ class ILogger {
         ILogger() : name("Logger") {}
         explicit ILogger(std::string  name) : name(std::move(name)) {}
         virtual void log(const std::string& data) const = 0;
+        virtual std::string getName() { return name; }
+        bool operator==(const ILogger& other) const {
+            return name == other.name;
+        }
         virtual ~ILogger() = default;
 
 };

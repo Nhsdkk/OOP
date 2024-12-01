@@ -3,6 +3,7 @@
 //
 
 #include <memory>
+#include <sstream>
 #include "JsonObject.h"
 
 namespace Json {
@@ -52,5 +53,16 @@ namespace Json {
         type = Map;
     }
 
+    std::map<std::string, JsonObject> JsonObject::getObject() const {
+        if (valueMap.has_value()) return valueMap.value();
+        throw std::invalid_argument("Null dereference");
+    }
+
+    JsonObject &JsonObject::operator=(JsonObject &&other) noexcept {
+        type = other.type;
+        valueString = std::move(valueString);
+        valueMap = std::move(valueMap);
+        return *this;
+    }
 
 } // Json

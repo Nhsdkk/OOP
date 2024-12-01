@@ -15,16 +15,13 @@ namespace Logger {
 
         public:
             FileLogger() : ILogger(), filename("logs.txt") {}
+            FileLogger(const FileLogger& other) = default;
+            FileLogger(FileLogger&& other) noexcept = default;
+            FileLogger& operator=(const FileLogger& other) = default;
+            FileLogger& operator=(FileLogger&& other) noexcept;
             FileLogger(std::string  filename, std::string name) : ILogger(std::move(name)), filename(std::move(filename)) {}
-            void log(const std::string& str) const override {
-                std::ofstream file;
-                file.open(filename, std::ios_base::app);
-                if (!file.good()) throw std::invalid_argument("Can't load current state, because file can't be opened");
-
-                file << str << std::endl;
-                file.close();
-            }
-
+            void log(const std::string& str) const override;
+            ~FileLogger() override = default;
     };
 
 } // ILogger

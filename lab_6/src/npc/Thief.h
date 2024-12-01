@@ -1,33 +1,31 @@
 //
-// Created by nikit on 11/24/2024.
+// Created by nikit on 11/29/2024.
 //
 
-#ifndef OOP_LAB_6_SRC_ELF_H_
-#define OOP_LAB_6_SRC_ELF_H_
-
-#include <utility>
+#ifndef OOP_LAB_6_SRC_BEAR_H_
+#define OOP_LAB_6_SRC_BEAR_H_
 
 #include "BaseNpc.h"
-#include "Thief.h"
 #include "Squirrel.h"
+#include "Elf.h"
 
 namespace NPC {
 
-    class Elf : public BaseNpc {
+    class Thief : public BaseNpc {
         public:
-            Elf(): BaseNpc() {}
-            Elf(
+            Thief() : BaseNpc(){};
+            Thief(
                 const Utils::Point<double>& position,
                 double range,
                 const std::string& name,
                 const bool alive,
                 std::vector<std::shared_ptr<Logger::ILogger>> loggers
             ) : BaseNpc(position, range, name, alive, std::move(loggers)) {}
-            Elf(const Elf& other) = default;
-            Elf(Elf&& other) noexcept = default;
+            Thief(const Thief& other) = default;
+            Thief(Thief&& other) noexcept = default;
 
-            Elf& operator=(const Elf& other) = default;
-            Elf& operator=(Elf&& other) noexcept;
+            Thief& operator=(const Thief& other) = default;
+            Thief& operator=(Thief&& other) noexcept;
 
             std::string getType() const override;
 
@@ -36,8 +34,9 @@ namespace NPC {
             void visit(std::shared_ptr<Thief> npc) override;
             void visit(std::shared_ptr<Elf> npc) override;
             void visit(std::shared_ptr<Squirrel> npc) override;
+            ~Thief() override = default;
     };
 
 } // NPC
 
-#endif //OOP_LAB_6_SRC_ELF_H_
+#endif //OOP_LAB_6_SRC_BEAR_H_

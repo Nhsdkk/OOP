@@ -8,8 +8,8 @@ add_library(${SubProjectName}_npc
 
         src/npc/Elf.cpp
         src/npc/Elf.h
-        src/npc/Bear.cpp
-        src/npc/Bear.h
+        src/npc/Thief.cpp
+        src/npc/Thief.h
         src/npc/Squirrel.cpp
         src/npc/Squirrel.h
 )
@@ -21,10 +21,8 @@ add_library(${SubProjectName}_utils
         src/utils/Point.h
         src/utils/ISerializable.cpp
         src/utils/ISerializable.h
-        src/utils/IElement.cpp
-        src/utils/IElement.h
-        src/utils/IVisitor.cpp
-        src/utils/IVisitor.h
+        src/utils/Vec2D.cpp
+        src/utils/Vec2D.h
 )
 
 add_library(${SubProjectName}_logger

@@ -20,13 +20,9 @@ class Point : public ISerializable {
     public:
         Point() = default;
         Point(T x, T y) : x(x), y(y) {}
-        Point(const Point& other) : x(other.x), y(other.y){}
-        Point(Point&& other) noexcept : x(other.x), y(other.y){}
-        Point& operator=(const Point& other) {
-            x = other.x;
-            y = other.y;
-            return *this;
-        };
+        Point(const Point& other) = default;
+        Point(Point&& other) noexcept = default;
+        Point& operator=(const Point& other) = default;
         Point& operator=(Point&& other) noexcept {
             x = other.x;
             y = other.y;
@@ -48,7 +44,7 @@ class Point : public ISerializable {
             return os;
         }
 
-        std::string Serialize() const override {
+        std::string serialize() const override {
             std::ostringstream oss;
             oss << "{" << std::endl;
             oss << "X=" << x << ";" << std::endl;
@@ -57,12 +53,17 @@ class Point : public ISerializable {
             return oss.str();
         }
 
-        void Deserialize(const Json::JsonObject& jsonObject) override {
+        void deserialize(const Json::JsonObject& jsonObject) override {
             if (jsonObject.getType() != Json::Map) throw std::invalid_argument("Can't parse value to point");
             auto obj = jsonObject.getObject();
-            x = getOrThrow<double>(obj.at("X"));
-            y = getOrThrow<double>(obj.at("Y"));
+            x = obj.at("X").getValue<T>();
+            y = obj.at("Y").getValue<T>();
         }
+
+        T getX() const { return x; }
+        T getY() const { return y; }
+
+        ~Point() override = default;
 };
 
 } // Utils
