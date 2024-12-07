@@ -6,6 +6,6 @@
 
 namespace Logger {
     void ConsoleLogger::log(const std::string &str) const {
-        os << str << std::endl;
+        getOstream() << str << std::endl;
     }
 } // ILogger

@@ -15,6 +15,7 @@ namespace NPC {
     }
 
     std::string Thief::getType() const { return "Thief"; }
+    char Thief::getShortType() const { return 'T'; }
 
     Thief &Thief::operator=(Thief &&other) noexcept {
         BaseNpc::operator=(std::move(other));

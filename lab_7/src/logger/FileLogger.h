@@ -8,6 +8,7 @@
 #include <fstream>
 #include <utility>
 #include "ILogger.h"
+
 namespace Logger {
 
     class FileLogger : public ILogger {
@@ -15,11 +16,11 @@ namespace Logger {
 
         public:
             FileLogger() : ILogger(), filename("logs.txt") {}
+            FileLogger(std::string filename, std::string name, std::ostream& ostream) : ILogger(std::move(name), ostream), filename(std::move(filename)) {}
             FileLogger(const FileLogger& other) = default;
             FileLogger(FileLogger&& other) noexcept = default;
-            FileLogger& operator=(const FileLogger& other) = default;
-            FileLogger& operator=(FileLogger&& other) noexcept;
-            FileLogger(std::string  filename, std::string name) : ILogger(std::move(name)), filename(std::move(filename)) {}
+            FileLogger& operator=(const FileLogger& other) = delete;
+            FileLogger& operator=(FileLogger&& other) noexcept = delete;
             void log(const std::string& str) const override;
             ~FileLogger() override = default;
     };

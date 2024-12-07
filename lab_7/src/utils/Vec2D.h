@@ -29,7 +29,11 @@ requires std::is_arithmetic_v<T>
             dy = other.dy;
             return *this;
         };
-        double getLength() { return std::sqrt(dx * dx + dy * dy); }
+
+        double getLength() const { return std::sqrt(dx * dx + dy * dy); }
+        T getDx() const { return dx; }
+        T getDy() const { return dy; }
+
         bool operator== (const Vec2D& other) const{
             return std::fabs(dx - other.dx) < std::numeric_limits<T>::epsilon() && std::fabs(dy - other.dy) < std::numeric_limits<T>::epsilon();
         }

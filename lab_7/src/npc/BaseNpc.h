@@ -18,21 +18,22 @@ namespace NPC {
     class Thief;
 
     class BaseNpc : public Utils::ISerializable, public std::enable_shared_from_this<BaseNpc>{
-        Utils::Point<double> pos;
-        double range;
+        Utils::Point<int> pos;
+        double range, moveDistance;
         std::string name;
         bool isAlive;
         std::vector<std::shared_ptr<Logger::ILogger>> loggers;
 
         public:
-            BaseNpc() : pos(), range(), name(), isAlive(false), loggers() {}
+            BaseNpc() : pos(), range(), name(), isAlive(false), loggers(), moveDistance() {}
             BaseNpc(
-                const Utils::Point<double>& position,
+                const Utils::Point<int>& position,
                 double range,
+                double moveDistance,
                 std::string  name,
                 const bool alive,
                 std::vector<std::shared_ptr<Logger::ILogger>> loggers
-            ) : pos(position), name(std::move(name)), isAlive(alive), loggers(std::move(loggers)), range(range) {}
+            ) : pos(position), name(std::move(name)), isAlive(alive), loggers(std::move(loggers)), range(range), moveDistance(moveDistance) {}
             BaseNpc(const BaseNpc& other) = default;
             BaseNpc(BaseNpc&& other) noexcept = default;
 
@@ -40,17 +41,20 @@ namespace NPC {
             BaseNpc& operator=(BaseNpc&& other) noexcept;
 
             void kill(const std::shared_ptr<BaseNpc>& victim);
+            void move(const Utils::Vec2D<double>& moveVec);
 
             void attachLoggers(const std::vector<std::shared_ptr<Logger::ILogger>> &l);
 
             void detachLogger(const std::string& loggerName);
 
-            Utils::Point<double> getPos() const;
+            Utils::Point<int> getPos() const;
             double getRange() const;
+            double getMoveDistance() const;
             std::string getName() const;
             bool getIsAlive() const;
 
             virtual std::string getType() const = 0;
+            virtual char getShortType() const = 0;
 
             virtual void accept(const std::shared_ptr<BaseNpc>& npc) = 0;
 
@@ -65,6 +69,8 @@ namespace NPC {
             void deserialize(const Json::JsonObject& jsonObject) override;
 
             bool operator==(const BaseNpc& other) const;
+            BaseNpc& operator+=(const Utils::Vec2D<int>& vec);
+
             ~BaseNpc() override = default;
     };
 

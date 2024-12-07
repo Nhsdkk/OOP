@@ -20,4 +20,5 @@ namespace NPC {
         BaseNpc::operator=(std::move(other));
         return *this;
     }
+    char Squirrel::getShortType() const { return 'S'; }
 } // NPC

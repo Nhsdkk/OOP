@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(SubProjectName "lab_6")
+set(SubProjectName "lab_7")
 
 add_library(${SubProjectName}_npc
         src/npc/BaseNpc.cpp
@@ -23,6 +23,10 @@ add_library(${SubProjectName}_utils
         src/utils/ISerializable.h
         src/utils/Vec2D.cpp
         src/utils/Vec2D.h
+        src/utils/ScopedThread.cpp
+        src/utils/ScopedThread.h
+        src/utils/RandomNumberGenerator.cpp
+        src/utils/RandomNumberGenerator.h
 )
 
 add_library(${SubProjectName}_logger

@@ -15,12 +15,13 @@ namespace NPC {
         public:
             Squirrel(): BaseNpc() {}
             Squirrel(
-                const Utils::Point<double>& position,
-                double range,
+                const Utils::Point<int>& position,
                 const std::string& name,
                 const bool alive,
-                std::vector<std::shared_ptr<Logger::ILogger>> loggers
-            ) : BaseNpc(position, range, name, alive, std::move(loggers)) {}
+                std::vector<std::shared_ptr<Logger::ILogger>> loggers,
+                double range = 5,
+                double moveDistance = 5
+            ) : BaseNpc(position, range, moveDistance, name, alive, std::move(loggers)) {}
             Squirrel(const Squirrel& other) = default;
             Squirrel(Squirrel&& other) noexcept = default;
 
@@ -28,13 +29,13 @@ namespace NPC {
             Squirrel& operator=(Squirrel&& other) noexcept;
 
             std::string getType() const override;
+            char getShortType() const override;
 
             void accept(const std::shared_ptr<BaseNpc>& visitor) override;
 
             void visit(std::shared_ptr<Thief> npc) override;
             void visit(std::shared_ptr<Elf> npc) override;
             void visit(std::shared_ptr<Squirrel> npc) override;
-
     };
 
 } // NPC

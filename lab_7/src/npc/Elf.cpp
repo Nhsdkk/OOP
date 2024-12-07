@@ -15,6 +15,8 @@ namespace NPC {
     }
 
     std::string Elf::getType() const { return "Elf"; }
+    char Elf::getShortType() const { return 'E'; }
+
     Elf &Elf::operator=(Elf &&other) noexcept {
         BaseNpc::operator=(std::move(other));
         return *this;

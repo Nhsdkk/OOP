@@ -33,7 +33,13 @@ class Point : public ISerializable {
             return std::fabs(x - other.x) < std::numeric_limits<T>::epsilon() && std::fabs(y - other.y) < std::numeric_limits<T>::epsilon();
         }
 
-        friend std::istream& operator>>(std::istream& is, Point& point){
+        Point& operator+=(const std::pair<T, T> dP){
+            x += dP.first;
+            y += dP.second;
+            return *this;
+        }
+
+        friend std::istream& operator<<(std::istream& is, Point& point){
             std::cout << "Enter x and y of the point: ";
             is >> point.x >> point.y;
             return is;
@@ -58,6 +64,11 @@ class Point : public ISerializable {
             auto obj = jsonObject.getObject();
             x = obj.at("X").getValue<T>();
             y = obj.at("Y").getValue<T>();
+        }
+
+        bool operator<(const Point& other) {
+            if (y != other.y) return y < other.y;
+            return x < other.x;
         }
 
         T getX() const { return x; }

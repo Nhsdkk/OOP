@@ -17,12 +17,13 @@ namespace NPC {
         public:
             Elf(): BaseNpc() {}
             Elf(
-                const Utils::Point<double>& position,
-                double range,
+                const Utils::Point<int>& position,
                 const std::string& name,
                 const bool alive,
-                std::vector<std::shared_ptr<Logger::ILogger>> loggers
-            ) : BaseNpc(position, range, name, alive, std::move(loggers)) {}
+                std::vector<std::shared_ptr<Logger::ILogger>> loggers,
+                double range = 50,
+                double moveDistance = 10
+            ) : BaseNpc(position, range, moveDistance, name, alive, std::move(loggers)) {}
             Elf(const Elf& other) = default;
             Elf(Elf&& other) noexcept = default;
 
@@ -30,6 +31,7 @@ namespace NPC {
             Elf& operator=(Elf&& other) noexcept;
 
             std::string getType() const override;
+            char getShortType() const override;
 
             void accept(const std::shared_ptr<BaseNpc>& visitor) override;
 

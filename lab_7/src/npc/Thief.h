@@ -15,12 +15,13 @@ namespace NPC {
         public:
             Thief() : BaseNpc(){};
             Thief(
-                const Utils::Point<double>& position,
-                double range,
+                const Utils::Point<int>& position,
                 const std::string& name,
                 const bool alive,
-                std::vector<std::shared_ptr<Logger::ILogger>> loggers
-            ) : BaseNpc(position, range, name, alive, std::move(loggers)) {}
+                std::vector<std::shared_ptr<Logger::ILogger>> loggers,
+                double range = 10,
+                double moveDistance = 10
+            ) : BaseNpc(position, range, moveDistance, name, alive, std::move(loggers)) {}
             Thief(const Thief& other) = default;
             Thief(Thief&& other) noexcept = default;
 
@@ -28,6 +29,7 @@ namespace NPC {
             Thief& operator=(Thief&& other) noexcept;
 
             std::string getType() const override;
+            char getShortType() const override;
 
             void accept(const std::shared_ptr<BaseNpc>& visitor) override;
 
