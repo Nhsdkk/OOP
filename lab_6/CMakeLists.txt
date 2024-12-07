@@ -23,6 +23,8 @@ add_library(${SubProjectName}_utils
         src/utils/ISerializable.h
         src/utils/Vec2D.cpp
         src/utils/Vec2D.h
+        src/utils/RandomNumberGenerator.cpp
+        src/utils/RandomNumberGenerator.h
 )
 
 add_library(${SubProjectName}_logger

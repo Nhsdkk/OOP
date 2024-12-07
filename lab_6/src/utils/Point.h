@@ -39,7 +39,7 @@ class Point : public ISerializable {
             return is;
         }
 
-        friend std::ostream & operator>>(std::ostream & os, Point& point){
+        friend std::ostream & operator<<(std::ostream & os, Point& point){
             os << "X: " << point.x << " Y: " << point.y;
             return os;
         }

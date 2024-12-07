@@ -8,6 +8,10 @@ namespace Field {
 
     class Field {
         std::vector<std::shared_ptr<NPC::BaseNpc>> npcs;
+
+        void moveNpcs();
+        void fight();
+
         public:
             Field() : npcs() {}
             Field(std::initializer_list<std::shared_ptr<NPC::BaseNpc>> npc) : npcs(npc) {};
@@ -19,8 +23,11 @@ namespace Field {
             Field& operator=(Field&& other) noexcept;
 
             void play();
+            void printCurrentStatus() const;
+
             void backup() const;
             void load(const std::vector<std::shared_ptr<Logger::ILogger>>& loggers);
+
             ~Field() = default;
     };
 
