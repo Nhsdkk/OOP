@@ -6,7 +6,7 @@
 #include "../src/logger/ConsoleLogger.h"
 #include "../src/logger/FileLogger.h"
 
-const inline std::string outLogFileName = "logs2.txt";
+const inline std::string outLogFileName = "logs1.txt";
 const inline std::string backupFileName = "backup.txt";
 const inline std::string logResult = "String1\nString2\n";
 const inline std::string logInput1 = "String1";
@@ -51,9 +51,11 @@ TEST(ConsoleLoggerTests, ShouldLogCorrectly){
 }
 
 TEST(FileLoggerTests, ShouldLogCorrectly){
-    auto logger = Logger::FileLogger(outLogFileName, "name");
-    logger.log(logInput1);
-    logger.log(logInput2);
+    {
+        auto logger = Logger::FileLogger(outLogFileName, "name");
+        logger.log(logInput1);
+        logger.log(logInput2);
+    }
 
     std::ifstream file(outLogFileName);
 
