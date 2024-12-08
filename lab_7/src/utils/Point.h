@@ -30,7 +30,7 @@ class Point : public ISerializable {
         };
 
         bool operator== (const Point& other) const{
-            return std::fabs(x - other.x) < std::numeric_limits<T>::epsilon() && std::fabs(y - other.y) < std::numeric_limits<T>::epsilon();
+            return std::fabs(x - other.x) <= std::numeric_limits<T>::epsilon() && std::fabs(y - other.y) <= std::numeric_limits<T>::epsilon();
         }
 
         Point& operator+=(const std::pair<T, T> dP){

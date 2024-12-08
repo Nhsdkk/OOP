@@ -12,15 +12,21 @@
 #include "backup/BackupHandler.h"
 #include "utils/ScopedThread.h"
 #include "utils/RandomNumberGenerator.h"
+#include "utils/CoroutineHandler.h"
 
-constexpr int minX = 0, maxX = 10;
-constexpr int minY = 0, maxY = 10;
-
+void logMultiple(const std::string& message, const std::vector<std::shared_ptr<Logger::ILogger>>& loggers){
+    for (auto& logger : loggers)
+        logger->log(message);
+}
 
 namespace Field {
-    Field::Field(const size_t count) : npcs() {
-        std::vector<std::shared_ptr<Logger::ILogger>> loggers {std::make_shared<Logger::ConsoleLogger>()};
-
+    Field::Field(
+        size_t count,
+        int minX,
+        int maxX,
+        int minY,
+        int maxY
+    ) : npcs(), loggers({std::make_shared<Logger::ConsoleLogger>()}), minX(minX), maxX(maxX), minY(minY), maxY(maxY) {
         std::random_device dev;
         Utils::RandomNumberGenerator rng(dev);
 
@@ -48,7 +54,7 @@ namespace Field {
         handler.Backup(npcs);
     }
 
-    void Field::load(const std::vector<std::shared_ptr<Logger::ILogger>>& loggers) {
+    void Field::load() {
         Backup::BackupHandler handler;
         npcs = handler.Load();
         for (auto & npc : npcs){
@@ -61,9 +67,9 @@ namespace Field {
         return *this;
     }
 
-    void Field::play() {
+    void Field::play(int sec) {
         auto start = std::chrono::steady_clock::now();
-        auto duration_limit = std::chrono::seconds(3);
+        auto duration_limit = std::chrono::seconds(sec);
         Logger::ConsoleLogger logger;
 
         auto st = Utils::ScopedThread([&logger,this, start, duration_limit] (){
@@ -78,6 +84,8 @@ namespace Field {
                 logger << "Finished fighting" << std::endl;
             }
             logger << "Finished game!" << std::endl;
+            printCurrentStatus();
+            printStats();
         });
 
     }
@@ -111,20 +119,64 @@ namespace Field {
             auto pos = npc->getPos();
 
             auto range = rng.generateInt(0, std::floor(md));
-            auto dx = rng.generateInt(0, std::floor(std::sqrt(range)));
-            auto dy = static_cast<int>(std::floor(std::sqrt(range * range - dx * dx)));
+            auto dx = rng.generateInt(-std::floor(std::sqrt(range)), std::floor(std::sqrt(range)));
+            auto dy = static_cast<int>(std::floor(std::sqrt(range * range - dx * dx))) * std::pow(-1, range % 2);
 
             if (pos.getX() + dx > maxX) dx = maxX - pos.getX();
             if (pos.getY() + dy > maxY) dy = maxY - pos.getY();
+
+            if (pos.getX() + dx < minX) dx = minX - pos.getX();
+            if (pos.getY() + dy < minY) dy = minY - pos.getY();
 
             *npc += Utils::Vec2D<int>(dx, dy);
         }
     }
 
     void Field::fight() {
+        std::vector<std::function<void()>> tasks;
+
         for (auto & npc1 : npcs){
             for (auto & npc2 : npcs){
-                npc1->accept(npc2);
+                tasks.emplace_back([npc1, npc2](){
+                  npc1->accept(npc2);
+                });
+            }
+        }
+
+        auto coroutineHandler = Utils::CoroutineHandler(tasks);
+        coroutineHandler.await();
+    }
+
+    void Field::attachLoggers(const std::vector<std::shared_ptr<Logger::ILogger>> &l) {
+        loggers.insert(loggers.end(), l.begin(),l.end());
+        for (auto& npc : npcs){
+            npc->attachLoggers(l);
+        }
+    }
+
+    void Field::detachLogger(const std::string &loggerName) {
+        loggers.erase(
+            std::remove_if(
+                loggers.begin(),
+                loggers.end(),
+                [loggerName](const std::shared_ptr<Logger::ILogger>& item)
+                { return item->getName() == loggerName; }
+            ),
+            loggers.end()
+        );
+
+        for (auto& npc : npcs){
+            npc->detachLogger(loggerName);
+        }
+    }
+
+    void Field::printStats() const {
+        for (auto& npc : npcs){
+            auto pos = npc->getPos();
+            if (npc->getIsAlive()){
+                logMultiple(std::format("{} of type {} is alive and at x={} y={}", npc->getName(), npc->getType(), pos.getX(), pos.getY()), loggers);
+            } else {
+                logMultiple(std::format("{} of type {} was killed at x={} y={}", npc->getName(), npc->getType(), pos.getX(), pos.getY()), loggers);
             }
         }
     }

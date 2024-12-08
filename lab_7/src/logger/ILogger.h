@@ -9,6 +9,10 @@
 #include <stdexcept>
 #include <utility>
 #include <iostream>
+#include <shared_mutex>
+
+static std::shared_mutex sharedMutex;
+
 namespace Logger {
 
 class ILogger {
@@ -21,24 +25,20 @@ class ILogger {
     public:
         ILogger() : name("Logger"), os(std::cout) {}
         explicit ILogger(std::string name, std::ostream& ostream) : name(std::move(name)), os(ostream){}
-        virtual void log(const std::string& data) const = 0;
+        void log(const std::string& data) const;
 
         std::string getName() const { return name; }
 
-        bool operator==(const ILogger& other) const {
-            return name == other.name;
-        }
+        bool operator==(const ILogger& other) const;
 
         template<class T>
         ILogger& operator<<(const T& data){
+            std::shared_lock lock(sharedMutex);
             os << data;
             return *this;
         }
 
-        ILogger& operator<<(std::ostream& (*fun)(std::ostream&)) {
-            os << std::endl;
-            return *this;
-        }
+        ILogger& operator<<(std::ostream& (*fun)(std::ostream&));
 
         virtual ~ILogger() = default;
 

@@ -12,6 +12,8 @@
 #include "../logger/ILogger.h"
 #include "../utils/Vec2D.h"
 
+static std::mutex mtx;
+
 namespace NPC {
     class Elf;
     class Squirrel;
@@ -44,7 +46,7 @@ namespace NPC {
             void move(const Utils::Vec2D<double>& moveVec);
 
             void attachLoggers(const std::vector<std::shared_ptr<Logger::ILogger>> &l);
-
+            void clearLoggers();
             void detachLogger(const std::string& loggerName);
 
             Utils::Point<int> getPos() const;

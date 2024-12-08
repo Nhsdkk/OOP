@@ -22,9 +22,9 @@ TEST(BackupLoaderTests, ShouldDumpAndLoadData){
     std::vector<std::shared_ptr<Logger::ILogger>> logger {std::make_shared<Logger::ConsoleLogger>()};
 
     std::vector<std::shared_ptr<NPC::BaseNpc>> items {
-        std::make_shared<NPC::Thief>(Utils::Point<double>(1, 1), 1, "name", false, logger),
-        std::make_shared<NPC::Elf>(Utils::Point<double>(2, 3), 2, "name1", false, logger),
-        std::make_shared<NPC::Squirrel>(Utils::Point<double>(3, 3), 3, "name2", true, logger)
+        std::make_shared<NPC::Thief>(Utils::Point<int>(1, 1), "name", false, logger),
+        std::make_shared<NPC::Elf>(Utils::Point<int>(2, 3), "name1", false, logger),
+        std::make_shared<NPC::Squirrel>(Utils::Point<int>(3, 3), "name2", true, logger)
     };
 
     Backup::BackupHandler backupHandler(backupFileName);
@@ -51,9 +51,11 @@ TEST(ConsoleLoggerTests, ShouldLogCorrectly){
 }
 
 TEST(FileLoggerTests, ShouldLogCorrectly){
-    auto logger = Logger::FileLogger(outLogFileName, "name");
-    logger.log(logInput1);
-    logger.log(logInput2);
+    {
+        auto logger = Logger::FileLogger(outLogFileName, "name");
+        logger.log(logInput1);
+        logger.log(logInput2);
+    }
 
     std::ifstream file(outLogFileName);
 
@@ -70,8 +72,8 @@ TEST(VisitorTests, ShouldVisitCorrectly) {
     std::ostringstream oss;
     std::vector<std::shared_ptr<Logger::ILogger>> logger {std::make_shared<Logger::ConsoleLogger>(oss, "name")};
 
-    auto thief = std::make_shared<NPC::Thief>(Utils::Point<double>(1, 1), 5, "Thief1", true, logger);
-    auto squirrel = std::make_shared<NPC::Squirrel>(Utils::Point<double>(3, 3), 1, "Squirrel1", true, logger);
+    auto thief = std::make_shared<NPC::Thief>(Utils::Point<int>(1, 1), "Thief1", true, logger);
+    auto squirrel = std::make_shared<NPC::Squirrel>(Utils::Point<int>(3, 3), "Squirrel1", true, logger);
 
     thief->accept(squirrel);
     squirrel->accept(thief);
@@ -82,8 +84,8 @@ TEST(VisitorTests, ShouldNotKillIfNotInRange) {
     std::ostringstream oss;
     std::vector<std::shared_ptr<Logger::ILogger>> logger {std::make_shared<Logger::ConsoleLogger>(oss, "name")};
 
-    auto thief = std::make_shared<NPC::Thief>(Utils::Point<double>(1, 1), 1, "Thief1", true, logger);
-    auto squirrel = std::make_shared<NPC::Squirrel>(Utils::Point<double>(15, 15), 1, "Squirrel1", true, logger);
+    auto thief = std::make_shared<NPC::Thief>(Utils::Point<int>(1, 1), "Thief1", true, logger);
+    auto squirrel = std::make_shared<NPC::Squirrel>(Utils::Point<int>(15, 15), "Squirrel1", true, logger);
 
     thief->accept(squirrel);
     squirrel->accept(thief);
@@ -94,8 +96,8 @@ TEST(VisitorTests, ShouldNotKillIfNotAlive) {
     std::ostringstream oss;
     std::vector<std::shared_ptr<Logger::ILogger>> logger {std::make_shared<Logger::ConsoleLogger>(oss, "name")};
 
-    auto thief = std::make_shared<NPC::Thief>(Utils::Point<double>(1, 1), 5, "Thief1", false, logger);
-    auto squirrel = std::make_shared<NPC::Squirrel>(Utils::Point<double>(2, 2), 5, "Squirrel1", true, logger);
+    auto thief = std::make_shared<NPC::Thief>(Utils::Point<int>(1, 1), "Thief1", false, logger);
+    auto squirrel = std::make_shared<NPC::Squirrel>(Utils::Point<int>(2, 2), "Squirrel1", true, logger);
 
     thief->accept(squirrel);
     squirrel->accept(thief);

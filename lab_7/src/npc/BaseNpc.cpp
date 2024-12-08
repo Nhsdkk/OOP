@@ -13,6 +13,7 @@ namespace {
 
 namespace NPC {
     void BaseNpc::kill(const std::shared_ptr<BaseNpc>& victim) {
+        std::lock_guard lock (mtx);
         if (!canAttack(victim)) return;
 
         auto attackerRoll = rollDice(), defenderRoll = rollDice();
@@ -80,7 +81,7 @@ namespace NPC {
     }
 
     bool BaseNpc::operator==(const BaseNpc &other) const {
-        return getIsAlive() == other.getIsAlive() && getName() == other.getName() && getPos() == other.getPos() && getRange() == other.getRange();
+        return getIsAlive() == other.getIsAlive() && getName() == other.getName() && getPos() == other.getPos() && getRange() == other.getRange() && getMoveDistance() == other.getMoveDistance();
     }
 
     BaseNpc &BaseNpc::operator=(BaseNpc &&other) noexcept {
@@ -95,5 +96,9 @@ namespace NPC {
     BaseNpc &BaseNpc::operator+=(const Utils::Vec2D<int> &vec) {
         pos += std::pair<int, int>(vec.getDx(), vec.getDy());
         return *this;
+    }
+
+    void BaseNpc::clearLoggers() {
+        loggers.clear();
     }
 } // NPC

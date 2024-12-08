@@ -13,15 +13,15 @@ namespace Logger {
 
     class FileLogger : public ILogger {
         std::string filename;
+        std::ofstream ofstream;
 
         public:
             FileLogger() : ILogger(), filename("logs.txt") {}
-            FileLogger(std::string filename, std::string name, std::ostream& ostream) : ILogger(std::move(name), ostream), filename(std::move(filename)) {}
-            FileLogger(const FileLogger& other) = default;
-            FileLogger(FileLogger&& other) noexcept = default;
+            FileLogger(const std::string& filename, std::string name) : ofstream(std::ofstream(filename, std::ios::app)), ILogger(std::move(name), ofstream), filename(filename) {}
+            FileLogger(const FileLogger& other) = delete;
+            FileLogger(FileLogger&& other) noexcept = delete;
             FileLogger& operator=(const FileLogger& other) = delete;
             FileLogger& operator=(FileLogger&& other) noexcept = delete;
-            void log(const std::string& str) const override;
             ~FileLogger() override = default;
     };
 

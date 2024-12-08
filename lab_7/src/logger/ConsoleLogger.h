@@ -16,7 +16,6 @@ namespace Logger {
             ConsoleLogger& operator=(const ConsoleLogger& other) = delete;
             ConsoleLogger& operator=(ConsoleLogger&& other) noexcept = delete;
             explicit ConsoleLogger(std::ostream& ostream, std::string name) : ILogger(std::move(name), ostream){};
-            void log(const std::string& str) const override;
             ~ConsoleLogger() override = default;
     };
 
