@@ -113,40 +113,44 @@ namespace Field {
     }
 
     Utils::Task Field::moveNpcs() {
-        std::random_device dev;
-        Utils::RandomNumberGenerator rng(dev);
+        while (true) {
+            std::random_device dev;
+            Utils::RandomNumberGenerator rng(dev);
 
-        for (auto & npc : npcs){
-            if (!npc->getIsAlive()) continue;
-            auto md = npc->getMoveDistance();
-            auto pos = npc->getPos();
+            for (auto &npc : npcs) {
+                if (!npc->getIsAlive()) continue;
+                auto md = npc->getMoveDistance();
+                auto pos = npc->getPos();
 
-            auto range = rng.generateInt(0, std::floor(md));
-            auto dx = rng.generateInt(-std::floor(std::sqrt(range)), std::floor(std::sqrt(range)));
-            auto dy = static_cast<int>(std::floor(std::sqrt(range * range - dx * dx))) * std::pow(-1, range % 2);
+                auto range = rng.generateInt(0, std::floor(md));
+                auto dx = rng.generateInt(-std::floor(std::sqrt(range)), std::floor(std::sqrt(range)));
+                auto dy = static_cast<int>(std::floor(std::sqrt(range * range - dx * dx))) * std::pow(-1, range % 2);
 
-            if (pos.getX() + dx > maxX) dx = maxX - pos.getX();
-            if (pos.getY() + dy > maxY) dy = maxY - pos.getY();
+                if (pos.getX() + dx > maxX) dx = maxX - pos.getX();
+                if (pos.getY() + dy > maxY) dy = maxY - pos.getY();
 
-            if (pos.getX() + dx < minX) dx = minX - pos.getX();
-            if (pos.getY() + dy < minY) dy = minY - pos.getY();
+                if (pos.getX() + dx < minX) dx = minX - pos.getX();
+                if (pos.getY() + dy < minY) dy = minY - pos.getY();
 
-            *npc += Utils::Vec2D<int>(dx, dy);
+                *npc += Utils::Vec2D<int>(dx, dy);
+            }
+
+            co_await std::suspend_always{};
         }
-
-        co_await std::suspend_always{};
     }
 
 
 
     Utils::Task Field::fight() {
-        for (auto & npc1 : npcs){
-            for (auto & npc2 : npcs){
-                npc1->accept(npc2);
+        while (true) {
+            for (auto &npc1 : npcs) {
+                for (auto &npc2 : npcs) {
+                    npc1->accept(npc2);
+                }
             }
-        }
 
-        co_await std::suspend_always{};
+            co_await std::suspend_always{};
+        }
     }
 
     void Field::attachLoggers(const std::vector<std::shared_ptr<Logger::ILogger>> &l) {
