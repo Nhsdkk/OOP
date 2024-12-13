@@ -13,6 +13,8 @@
 #include "utils/ScopedThread.h"
 #include "utils/RandomNumberGenerator.h"
 
+using namespace std::chrono_literals;
+
 void logMultiple(const std::string& message, const std::vector<std::shared_ptr<Logger::ILogger>>& loggers){
     for (auto& logger : loggers)
         logger->log(message);
@@ -71,26 +73,22 @@ namespace Field {
         auto duration_limit = std::chrono::seconds(sec);
         Logger::ConsoleLogger logger;
 
-        auto st = Utils::ScopedThread([&logger,this, start, duration_limit] (){
-            logger << "Starting game!" << std::endl;
-
+        auto st = Utils::ScopedThread([this, start, duration_limit] (){
             auto fightCor = fight();
             auto moveCor = moveNpcs();
 
             while (std::chrono::steady_clock::now() - start < duration_limit){
-                printCurrentStatus();
-                logger << "Moving..." << std::endl;
                 moveCor.resume();
-                logger << "Finished moving" << std::endl;
-                logger << "Fighting..." << std::endl;
                 fightCor.resume();
-                logger << "Finished fighting" << std::endl;
             }
-            logger << "Finished game!" << std::endl;
-            printCurrentStatus();
-            printStats();
         });
 
+        while (std::chrono::steady_clock::now() - start < duration_limit){
+            printCurrentStatus();
+            std::this_thread::sleep_for(1s);
+        }
+
+        printStats();
     }
 
     void Field::printCurrentStatus() const {
@@ -103,12 +101,16 @@ namespace Field {
             board[pos.getY()][pos.getX()] = npc->getIsAlive() ? npc->getShortType() : 'X';
         }
 
+        std::ostringstream oss;
+
         for (const auto& row : board){
             for (const auto& cell: row){
-                logger << "[" << cell << "]";
+                oss << "[" << cell << "]";
             }
-            logger << std::endl;
+            oss << std::endl;
         }
+
+        logger << oss.str() << std::endl;
 
     }
 
