@@ -12,7 +12,6 @@
 #include "backup/BackupHandler.h"
 #include "utils/ScopedThread.h"
 #include "utils/RandomNumberGenerator.h"
-#include "utils/CoroutineHandler.h"
 
 void logMultiple(const std::string& message, const std::vector<std::shared_ptr<Logger::ILogger>>& loggers){
     for (auto& logger : loggers)
@@ -74,13 +73,17 @@ namespace Field {
 
         auto st = Utils::ScopedThread([&logger,this, start, duration_limit] (){
             logger << "Starting game!" << std::endl;
+
+            auto fightCor = fight();
+            auto moveCor = moveNpcs();
+
             while (std::chrono::steady_clock::now() - start < duration_limit){
                 printCurrentStatus();
                 logger << "Moving..." << std::endl;
-                moveNpcs();
+                moveCor.resume();
                 logger << "Finished moving" << std::endl;
                 logger << "Fighting..." << std::endl;
-                fight();
+                fightCor.resume();
                 logger << "Finished fighting" << std::endl;
             }
             logger << "Finished game!" << std::endl;
@@ -109,7 +112,7 @@ namespace Field {
 
     }
 
-    void Field::moveNpcs() {
+    Utils::Task Field::moveNpcs() {
         std::random_device dev;
         Utils::RandomNumberGenerator rng(dev);
 
@@ -130,21 +133,20 @@ namespace Field {
 
             *npc += Utils::Vec2D<int>(dx, dy);
         }
+
+        co_await std::suspend_always{};
     }
 
-    void Field::fight() {
-        std::vector<std::function<void()>> tasks;
 
+
+    Utils::Task Field::fight() {
         for (auto & npc1 : npcs){
             for (auto & npc2 : npcs){
-                tasks.emplace_back([npc1, npc2](){
-                  npc1->accept(npc2);
-                });
+                npc1->accept(npc2);
             }
         }
 
-        auto coroutineHandler = Utils::CoroutineHandler(tasks);
-        coroutineHandler.await();
+        co_await std::suspend_always{};
     }
 
     void Field::attachLoggers(const std::vector<std::shared_ptr<Logger::ILogger>> &l) {

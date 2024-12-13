@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "npc/BaseNpc.h"
+#include "utils/Task.h"
 namespace Field {
 
     class Field {
@@ -11,8 +12,8 @@ namespace Field {
         std::vector<std::shared_ptr<Logger::ILogger>> loggers;
         int minX, maxX, minY, maxY;
 
-        void moveNpcs();
-        void fight();
+        Utils::Task moveNpcs();
+        Utils::Task fight();
 
         public:
             Field() : npcs(), minX(0), minY(30), maxX(0), maxY(30) {

@@ -5,7 +5,6 @@ set(SubProjectName "lab_7")
 add_library(${SubProjectName}_npc
         src/npc/BaseNpc.cpp
         src/npc/BaseNpc.h
-
         src/npc/Elf.cpp
         src/npc/Elf.h
         src/npc/Thief.cpp
@@ -27,8 +26,6 @@ add_library(${SubProjectName}_utils
         src/utils/ScopedThread.h
         src/utils/RandomNumberGenerator.cpp
         src/utils/RandomNumberGenerator.h
-        src/utils/CoroutineHandler.cpp
-        src/utils/CoroutineHandler.h
         src/utils/Task.cpp
         src/utils/Task.h
 )
